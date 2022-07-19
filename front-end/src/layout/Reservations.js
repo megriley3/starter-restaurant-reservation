@@ -50,7 +50,7 @@ function Reservations(){
             <br/>
             <label htmlFor="mobile_number">
                 Mobile Number 
-                <input name="mobile_number" id="mobile_number" type="tel" min={10} value={formData.mobile_number} placeHolder="Mobile Number" onChange={handleChange} required/>
+                <input name="mobile_number" id="mobile_number" type="tel" min={10} value={formData.mobile_number} placeholder="Mobile Number" onChange={handleChange} required/>
             </label>
             <br/>
             <label htmlFor="reservation_date">

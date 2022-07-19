@@ -13,6 +13,11 @@ import { today } from "../utils/date-time";
  *
  * @returns {JSX.Element}
  */
+const queryParams = new URLSearchParams(window.location.search);
+let date = queryParams.get("date");
+if(!date) date = today();
+console.log(date)
+
 function Routes() {
   return (
     <Switch>
@@ -23,7 +28,7 @@ function Routes() {
         <Reservations />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={today()} />
+        <Dashboard date={date} />
       </Route>
       <Route>
         <NotFound />
