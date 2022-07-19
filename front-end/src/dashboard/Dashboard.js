@@ -10,11 +10,10 @@ import { previous, next, today } from "../utils/date-time";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date }) {
+function Dashboard({ reservationDate, setReservationDate }) {
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  const [reservationDate, setReservationDate] = useState(date);
 
   useEffect(loadDashboard, [reservationDate]);
 

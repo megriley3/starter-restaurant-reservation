@@ -15,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/reservations", reservationsRouter);
-//app.use("/dashboard", dashboardRouter)
 
 app.use(notFound);
 app.use(errorHandler);
