@@ -32,7 +32,7 @@ function validDate(){
     if(resDate.getTime()<today.getTime()){
       next({status: 400, message: `Reservation date has already passed.`})
     } 
-    if(day === 2){
+    if(day === 1){
       next({status: 400, message:  `Restaurant is closed on Tuesdays.`})
     }
     next()
