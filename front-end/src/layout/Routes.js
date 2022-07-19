@@ -19,7 +19,6 @@ function Routes() {
   const queryParams = new URLSearchParams(window.location.search);
   let date = queryParams.get("date");
   if(!date) date = today();
-  console.log(date);
 
   const [reservationDate, setReservationDate] = useState(date);
 

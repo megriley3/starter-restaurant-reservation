@@ -6,9 +6,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  */
 async function list(req, res, next) {
   let date = req.query.date;
-  console.log(req.query)
   if(!date) date = new Date();
-  console.log(date)
   const data = await reservationsService.list(date);
   res.json({data});
 }
@@ -20,6 +18,24 @@ function bodyHasProperty(property){
       return next()
     } 
     next({status: 400, message: `Must include a ${property}`})
+  }
+}
+
+function validDate(){
+  return function (req, res, next){
+    const {data: {reservation_date} = {}} = req.body;
+    const resDate = new Date(reservation_date);
+    const today = new Date();
+    const day = resDate.getDay()
+    console.log(resDate)
+    console.log(day)
+    if(resDate.getTime()<today.getTime()){
+      next({status: 400, message: `Reservation date has already passed.`})
+    } 
+    if(day === 2){
+      next({status: 400, message:  `Restaurant is closed on Tuesdays.`})
+    }
+    next()
   }
 }
 
@@ -49,6 +65,7 @@ module.exports = {
     bodyHasProperty("last_name"),
     bodyHasProperty("mobile_number"),
     bodyHasProperty("reservation_date"),
+    validDate(),
     bodyHasProperty("reservation_time"),
     asyncErrorBoundary(create)]
 };
