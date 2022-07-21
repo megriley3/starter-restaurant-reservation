@@ -27,8 +27,7 @@ function Reservations({reservationDate, setReservationDate}){
         date = date + "T00:00:00";
         date = new Date(date);
         const now = new Date();
-        validDate(date, now);
-        validTime();       
+        validDate(date, now);    
     }
 
     const validDate = (date, now) => {
@@ -48,7 +47,9 @@ function Reservations({reservationDate, setReservationDate}){
         date = new Date(date);
         const now = new Date();
         const currHours = now.getHours();
+        console.log(currHours)
         const currMinutes = now.getMinutes();
+        console.log(currMinutes, "minutes")
         const time = formData.reservation_time;
         const timeArray = time.split(":")
         const hours = timeArray[0];
@@ -66,6 +67,7 @@ function Reservations({reservationDate, setReservationDate}){
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        validTime();   
         setFormData(initialFormData);
         setReservationDate(formData.reservation_date)
         createReservation(formData)
