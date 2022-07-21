@@ -23,6 +23,7 @@ function Reservations({reservationDate, setReservationDate}){
             ...formData,
             [target.name]: target.value,
         })
+        setError(null);
         let date = formData.reservation_date;
         date = date + "T00:00:00";
         date = new Date(date);
@@ -47,9 +48,7 @@ function Reservations({reservationDate, setReservationDate}){
         date = new Date(date);
         const now = new Date();
         const currHours = now.getHours();
-        console.log(currHours)
         const currMinutes = now.getMinutes();
-        console.log(currMinutes, "minutes")
         const time = formData.reservation_time;
         const timeArray = time.split(":")
         const hours = timeArray[0];
