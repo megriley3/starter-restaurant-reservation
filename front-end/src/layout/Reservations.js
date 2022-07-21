@@ -27,6 +27,11 @@ function Reservations({reservationDate, setReservationDate}){
         date = date + "T00:00:00";
         date = new Date(date);
         const now = new Date();
+        validDate(date, now);
+        validTime();       
+    }
+
+    const validDate = (date, now) => {
         const day = date.getDay();
         if(date.getTime()<now.getTime() && day===2){
             setError({message: 'Reservation date has already passed and restaurant is closed on Tuesdays.'})
@@ -35,13 +40,33 @@ function Reservations({reservationDate, setReservationDate}){
         } else if(day===2){ 
             setError({message: 'Restaurant is closed on Tuesdays.'});
         }
-        
+    }
+
+    const validTime = () => {
+        let date = formData.reservation_date;
+        date = date + "T00:00:00";
+        date = new Date(date);
+        const now = new Date();
+        const currHours = now.getHours();
+        const currMinutes = now.getMinutes();
+        const time = formData.reservation_time;
+        const timeArray = time.split(":")
+        const hours = timeArray[0];
+        const minutes = timeArray[1];
+        if(hours<10 || (hours===10 && minutes<30))(
+            setError({message: `Restaurant opens at 10:30`})
+        )
+        if(date===now && (hours<currHours || (hours===currHours && minutes<currMinutes))){
+            setError({message: `Reservations have to be in the future.`})
+        }
+        if(hours>21 || (hours===21 && minutes>30)){
+            setError({message: `Reservations need to be an hour before closing time.`})
+        }
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
         setFormData(initialFormData);
-        let date = formData.reservation_date;
         setReservationDate(formData.reservation_date)
         createReservation(formData)
             .then(()=> history.push(`/dashboard?date=${reservationDate}`))

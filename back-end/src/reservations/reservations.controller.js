@@ -25,15 +25,36 @@ function validDate(){
   return function (req, res, next){
     const {data: {reservation_date} = {}} = req.body;
     const resDate = new Date(reservation_date);
+    res.locals.reservation_date = resDate;
     const today = new Date();
     const day = resDate.getDay()
-    console.log(resDate)
-    console.log(day)
     if(resDate.getTime()<today.getTime()){
       next({status: 400, message: `Reservation date has already passed.`})
     } 
     if(day === 1){
       next({status: 400, message:  `Restaurant is closed on Tuesdays.`})
+    }
+    next()
+  }
+}
+
+function validTime(){
+  return function (req, res, next){
+    const {data: {reservation_time} ={}} = req.body;
+    const timeArray = reservation_time.split(":")
+    const hours = timeArray[0];
+    const minutes = timeArray[1];
+    const now = new Date();
+    const currHours = now.getHours();
+    const currMinutes = now.getMinutes();
+    if(hours<10 || (hours===10 && minutes<30)){
+      next({status: 400, message: `Restaurant opens at 10:30`})
+    }
+    if(hours<currHours || (hours===currHours && minutes<currMinutes)){
+      next({status: 400, message: `Reservation time has already passed.`})
+    }
+    if(hours>21 || (hours===21 && minutes>30)){
+      next({status: 400, message: `Reservations must be at least an hour before closing.`})
     }
     next()
   }
@@ -66,6 +87,7 @@ module.exports = {
     bodyHasProperty("mobile_number"),
     bodyHasProperty("reservation_date"),
     validDate(),
+    validTime(),
     bodyHasProperty("reservation_time"),
     asyncErrorBoundary(create)]
 };
