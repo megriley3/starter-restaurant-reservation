@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { listReservations } from "../utils/api";
+import ReservationsList from "../layout/ReservationsList";
+import { listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { previous, next, today } from "../utils/date-time";
+import TablesList from "../layout/TablesList";
 
 /**
  * Defines the dashboard page.
@@ -10,12 +13,14 @@ import { previous, next, today } from "../utils/date-time";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ reservationDate, setReservationDate }) {
+function Dashboard({ reservationDate, setReservationDate, tables, setTables }) {
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [reservationDate]);
+  useEffect(loadTables, []);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -23,6 +28,15 @@ function Dashboard({ reservationDate, setReservationDate }) {
     listReservations( {date: reservationDate} , abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+    return () => abortController.abort();
+  }
+
+  function loadTables(){
+    const abortController = new AbortController();
+    setTablesError(null);
+    listTables(abortController.signal)
+      .then(setTables)
+      .catch(setTablesError);
     return () => abortController.abort();
   }
 
@@ -48,7 +62,11 @@ function Dashboard({ reservationDate, setReservationDate }) {
         <h4 className="mb-0">Reservations for date: {reservationDate}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
+      <ReservationsList reservations={reservations}/>
+      <ErrorAlert error={tablesError}/>
+      <TablesList/>
       {JSON.stringify(reservations)}
+      {JSON.stringify(tables)}
       <div>
         <button onClick={handleClickPrevious}>Previous</button>
         <button onClick={handleClickToday}>Today</button>
