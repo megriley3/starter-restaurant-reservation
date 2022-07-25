@@ -22,7 +22,7 @@ function SeatReservations({tables, setTables}){
     
     if(Array.isArray(tables)){
         const options = tables.map((table, index) => {
-            <option value={table.table_name}>{table.table_name} - {table.capacity}</option>
+            return <option value={table.table_name}>{table.table_name} - {table.capacity}</option>
         })
         return (
             <form onSubmit={handleSubmit}>
