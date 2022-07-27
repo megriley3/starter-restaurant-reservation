@@ -51,16 +51,17 @@ function Reservations({reservationDate, setReservationDate}){
         const currMinutes = now.getMinutes();
         const time = formData.reservation_time;
         const timeArray = time.split(":")
-        const hours = timeArray[0];
-        const minutes = timeArray[1];
-        if(hours<10 || (hours===10 && minutes<30))(
-            setError({message: `Restaurant opens at 10:30`})
-        )
+        const hours = Number(timeArray[0]);
+        const minutes = Number(timeArray[1]);
         if(date===now && (hours<currHours || (hours===currHours && minutes<currMinutes))){
             setError({message: `Reservations have to be in the future.`})
+            return <ErrorAlert error={error}/>
         }
         if(hours>21 || (hours===21 && minutes>30)){
             setError({message: `Reservations need to be an hour before closing time.`})
+        }
+        if(hours<10 || (hours===10 && minutes<30)){
+            setError({message: `Restaurant opens at 10:30`})
         }
     }
 
@@ -68,10 +69,12 @@ function Reservations({reservationDate, setReservationDate}){
         event.preventDefault();
         validTime();   
         setFormData(initialFormData);
-        setReservationDate(formData.reservation_date)
-        createReservation(formData)
-            .then(()=> history.push(`/dashboard?date=${reservationDate}`))
-            .catch(setError);
+        if(!error){
+            setReservationDate(formData.reservation_date)
+            createReservation(formData)
+                .then(()=> history.push(`/dashboard?date=${reservationDate}`))
+                .catch(setError);
+        }
     }
 
        return (

@@ -42,8 +42,8 @@ function validTime(){
   return function (req, res, next){
     const {data: {reservation_time} ={}} = req.body;
     const timeArray = reservation_time.split(":")
-    const hours = timeArray[0];
-    const minutes = timeArray[1];
+    const hours = Number(timeArray[0]);
+    const minutes = Number(timeArray[1]);
     const now = new Date();
     const currHours = now.getHours();
     const currMinutes = now.getMinutes();

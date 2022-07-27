@@ -20,7 +20,7 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables }) {
   const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [reservationDate]);
-  useEffect(loadTables, []);
+  //useEffect(loadTables, []);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -66,7 +66,7 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables }) {
       <ErrorAlert error={tablesError}/>
       <TablesList/>
       {JSON.stringify(reservations)}
-      {JSON.stringify(tables)}
+  {JSON.stringify(tables)}
       <div>
         <button onClick={handleClickPrevious}>Previous</button>
         <button onClick={handleClickToday}>Today</button>

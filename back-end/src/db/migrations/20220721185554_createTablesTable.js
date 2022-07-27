@@ -4,10 +4,10 @@ exports.up = function(knex) {
     table.increments("table_id").primary();
     table.string("table_name").notNullable();
     table.integer("capacity").notNullable();
-    table.foreign("reservation_id").references("reservation_id").inTable("reservations");
+    //table.foreign("reservation_id").references("reservation_id").inTable("reservations");
   })
 };
 
 exports.down = function(knex) {
-  return knex.shcema.dropTable("tables");
+  return knex.schema.dropTable("tables");
 };
