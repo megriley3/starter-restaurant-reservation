@@ -1,20 +1,83 @@
 const tablesService = require("./tables.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const reservationsService = require("../reservations/reservations.service")
 
 async function list(req, res, next){
     const data = await tablesService.list();
     return res.json({data})
 }
 
-//add validation that gets the reservation_id and people and checks it against the table.capacity
-//return 400 for an error
+async function enoughCapacity(req, res, next){
+    const {reservation_id} = req.body.data;
+    let people = await reservationsService.read(reservation_id);
+    people = people[0];
+    people=people.people;
+    const {table_id} = req.params;
+    let table = await tablesService.read(table_id);
+    table=table[0];
+    if(table.capacity<people){
+        next({status: 400, message: 'Table capacity is less than the reservation people.'})
+    } else {
+        res.locals.table = table;
+        res.locals.reservation_id = reservation_id;
+        next();
+    }
+}
 
-//add validation checking if the table is occupied, return 400
-/*async function update(req, res, next){
-    //figure out how to go from table_name and reservation_id to update
-}*/
+async function tableIsFree(req, res, next){
+    const {table_id} = req.params;
+    let table = await tablesService.read(table_id);
+    table=table[0];
+    if(!table.reservation_id){
+        res.locals.table = table;
+        next()
+    } else{
+        next({status: 400, message: 'Table is occupied.'})
+    }
+}
+
+async function update(req, res, next){
+    //const {reservation_id} = req.body.data;
+    //const {table_id} = req.params;
+    //let table = await tablesService.read(table_id);
+    //table=table[0];
+    const {reservation_id} = res.locals;
+    let {table} = res.locals;
+    table = {
+        ...table,
+        reservation_id: reservation_id,
+    }
+    const data = await tablesService.update(table);
+    res.json({data});
+}
+
+function validTableName(req, res, next){
+    const table = req.body.data;
+    if(table.table_name.length>=2){
+        res.locals.table = table;
+        next();
+    } else{
+         next({status: 400, message: 'Table name must be at least 2 characters long.'});
+        }
+}
+
+function validCapacity(req, res, next){
+    const {table} = res.locals;
+    if(Number(table.capacity)>=1){
+        next();
+    } else{
+        next({status: 400, message: 'Table capacity must be at least 1.'})
+    }
+}
+
+async function create(req, res, next){
+    const {table} = res.locals;
+    const data = await tablesService.create(table);
+    res.status(201).json({data});
+}
 
 module.exports = {
     list: asyncErrorBoundary(list),
-    //update: asyncErrorBoundary(update),
+    update: [asyncErrorBoundary(enoughCapacity), asyncErrorBoundary(tableIsFree), asyncErrorBoundary(update)],
+    create: [validTableName, validCapacity, asyncErrorBoundary(create)]
 }

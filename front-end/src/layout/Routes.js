@@ -24,25 +24,26 @@ function Routes() {
 
   const [reservationDate, setReservationDate] = useState(date);
   const [tables, setTables] = useState([]);
+  const updateTables = (tablesList) => setTables(tablesList)
 
   return (
     <Switch>
       <Route exact={true} path="/">
         <Redirect to={"/dashboard"} />
       </Route>
-     {/*} <Route exact={true} path="/reservations/:reservation_id/seat">
-        <SeatReservations tables={tables} setTables={setTables} />
-  </Route>*/}
+     <Route exact={true} path="/reservations/:reservation_id/seat">
+        <SeatReservations tables={tables} setTables={setTables} updateTables={updateTables} />
+      </Route>
       <Route path="/reservations">
         <Reservations reservationDate={reservationDate} setReservationDate={setReservationDate}/>
       </Route>
       <Route path="/dashboard">
-        <Dashboard reservationDate={reservationDate} setReservationDate={setReservationDate} tables={tables} setTables={setTables}/>
+        <Dashboard reservationDate={reservationDate} setReservationDate={setReservationDate} tables={tables} setTables={setTables} updateTables={updateTables}/>
       </Route>
-      {/*<Route path="/tables">
+      <Route path="/tables">
         <Tables/>
       </Route>
-     */} <Route>
+      <Route>
         <NotFound />
       </Route>
     </Switch>

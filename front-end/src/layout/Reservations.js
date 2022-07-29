@@ -35,7 +35,7 @@ function Reservations({reservationDate, setReservationDate}){
         const day = date.getDay();
         if(date.getTime()<now.getTime() && day===2){
             setError({message: 'Reservation date has already passed and restaurant is closed on Tuesdays.'})
-        } else if(date.getTime()<now.getTime()){
+        } else if(date.getTime()<now.getTime() && !(date.getMonth()===now.getMonth() && date.getDate()===now.getDate())){
             setError({message: 'Reservation date has already passed.'})
         } else if(day===2){ 
             setError({message: 'Restaurant is closed on Tuesdays.'});

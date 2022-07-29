@@ -1,6 +1,6 @@
 import React from "react";
 
-function TablesList(tables){
+function TablesList({tables}){
     if(Array.isArray(tables)){
         const rows = tables.map(({table_name, capacity, reservation_id, table_id}, index) => {
             if(reservation_id){
@@ -26,11 +26,7 @@ function TablesList(tables){
                 <thead>
                     <tr>
                         <th>Table Name</th>
-                    </tr>
-                    <tr>
                         <th>Capacity</th>
-                    </tr>
-                    <tr>
                         <th>Status</th>
                     </tr>
                 </thead>

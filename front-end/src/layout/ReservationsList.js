@@ -1,18 +1,20 @@
 import React from "react";
 
-function ReservationsList(reservations){
-    //iterate through an object?
+function ReservationsList({reservations}){
     if(Array.isArray(reservations)){
-        const list = reservations.map((reservation, index) => {
-            const reservation_id = reservation.reservation_id;
+        const list = reservations.map(({reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people}, index) => {
             return (
                 <li key={index}>
-                    {reservation}
-                    <button href={`/reservations/${reservation_id}/seat`}>Seat</button>
+                    <h5>{reservation_time}</h5>
+                    <p>Name: {first_name} {last_name}</p>
+                    <p>Mobile Number: {mobile_number}</p>
+                    <p>People: {people}</p>
+                    <p>{reservation_date}</p>
+                    <a href={`/reservations/${reservation_id}/seat`} className="btn btn-primary">Seat</a>
                 </li>
             )
         })
-        return <ul>{list}</ul>
+        return <ul style={{listStyle: "none"}}>{list}</ul>
     }
     return null    
 }

@@ -13,14 +13,14 @@ import TablesList from "../layout/TablesList";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ reservationDate, setReservationDate, tables, setTables }) {
+function Dashboard({ reservationDate, setReservationDate, tables, setTables, updateTables }) {
   const history = useHistory();
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [reservationDate]);
-  //useEffect(loadTables, []);
+  useEffect(loadTables, [tables]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -35,7 +35,7 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables }) {
     const abortController = new AbortController();
     setTablesError(null);
     listTables(abortController.signal)
-      .then(setTables)
+      .then(updateTables)
       .catch(setTablesError);
     return () => abortController.abort();
   }
@@ -62,11 +62,13 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables }) {
         <h4 className="mb-0">Reservations for date: {reservationDate}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
+      <h3>Reservations</h3>
       <ReservationsList reservations={reservations}/>
       <ErrorAlert error={tablesError}/>
-      <TablesList/>
-      {JSON.stringify(reservations)}
-  {JSON.stringify(tables)}
+      <h3>Tables</h3>
+      <TablesList tables={tables}/>
+      {/*{JSON.stringify(reservations)}
+  {JSON.stringify(tables)}*/}
       <div>
         <button onClick={handleClickPrevious}>Previous</button>
         <button onClick={handleClickToday}>Today</button>

@@ -1,7 +1,7 @@
 const knex = require("../db/connection");
 
 function list(){
-    return knex("tables").select("*").sortBy("table_name")
+    return knex("tables").select("*").orderBy("table_name")
 }
 
 function update(updatedTable){
@@ -11,7 +11,17 @@ function update(updatedTable){
         .update(updatedTable, "*")
 }
 
+function create(table){
+    return knex("tables").insert(table)
+}
+
+function read(table_id){
+    return knex("tables").select("*").where({table_id})
+}
+
 module.exports = {
     list,
     update,
+    create,
+    read,
 }

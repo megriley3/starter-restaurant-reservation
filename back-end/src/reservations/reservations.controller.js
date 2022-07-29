@@ -28,7 +28,7 @@ function validDate(){
     res.locals.reservation_date = resDate;
     const today = new Date();
     const day = resDate.getDay()
-    if(resDate.getTime()<today.getTime()){
+    if(resDate.getTime()<today.getTime() && !(resDate.getMonth()===today.getMonth() && (resDate.getDate()+1)===today.getDate())){
       next({status: 400, message: `Reservation date has already passed.`})
     } 
     if(day === 1){
@@ -60,14 +60,6 @@ function validTime(){
   }
 }
 
-async function read(req, res, next){
-  let date = req.query.date;
-  if(!date) date = new Date();
-  console.log(date)
-  const data = await reservationsService.read(date);
-  res.json({data})
-}
-
 async function create(req, res){
   const newReservation = req.body.data;
   const now = new Date().toISOString();
@@ -80,7 +72,6 @@ async function create(req, res){
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  read: asyncErrorBoundary(read),
   create: [
     bodyHasProperty("first_name"),
     bodyHasProperty("last_name"),
