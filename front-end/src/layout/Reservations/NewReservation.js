@@ -17,9 +17,7 @@ function NewReservation(){
     
     const [formData, setFormData] = useState(initialFormData);
     const [error, setError] = useState(null);
-    const [reservationDate, setReservationDate] = useState("")
-
-    useEffect(pushToDash, [reservationDate]);
+    const [reservationDate, setReservationDate] = useState("");
 
     function pushToDash(){
         if(reservationDate){
@@ -33,6 +31,7 @@ function NewReservation(){
             ...formData,
             [target.name]: target.value,
         })
+        setReservationDate(formData.reservation_date);
         setError(null);
         let date = formData.reservation_date;
         date = date + "T00:00:00";
@@ -84,6 +83,7 @@ function NewReservation(){
             createReservation(formData)
                 .catch(setError);
         }
+        pushToDash();
     }
 
        return (
