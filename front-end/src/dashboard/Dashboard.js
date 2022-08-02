@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { listReservations } from "../utils/api";
-import ReservationsList from "../layout/ReservationsList";
+import ReservationsList from "./ReservationsList";
 import { listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { previous, next, today } from "../utils/date-time";
@@ -13,14 +13,25 @@ import TablesList from "../layout/TablesList";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ reservationDate, setReservationDate, tables, setTables, updateTables }) {
+function Dashboard() {
   const history = useHistory();
-  const [reservations, setReservations] = useState([]);
+
+  //get the reservation date or today's date
+  const queryParams = new URLSearchParams(window.location.search);
+  let date = queryParams.get("date");
+  if(!date) date = today();
+
+  const [reservations, setReservations] = useState(null)
   const [reservationsError, setReservationsError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
+  const [seatReserve, setSeatReserve] = useState(false);
+  const [tables, setTables] = useState([]);
+
+  const [reservationDate, setReservationDate] = useState(date);
+  const toggleSeatReserve = () => setSeatReserve(!seatReserve);
 
   useEffect(loadDashboard, [reservationDate]);
-  useEffect(loadTables, [tables]);
+  useEffect(loadTables, [seatReserve]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -32,10 +43,12 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables, upd
   }
 
   function loadTables(){
+    console.log("load tables");
     const abortController = new AbortController();
     setTablesError(null);
     listTables(abortController.signal)
-      .then(updateTables)
+      .then(setTables)
+      .then(()=>console.log("setTables"))
       .catch(setTablesError);
     return () => abortController.abort();
   }
@@ -55,6 +68,8 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables, upd
     history.push(`/dashboard?date=${reservationDate}`)
   }
 
+  console.log(seatReserve);
+
   return (
     <main>
       <h1>Dashboard</h1>
@@ -63,10 +78,10 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables, upd
       </div>
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
-      <ReservationsList reservations={reservations}/>
+      <ReservationsList reservations={reservations} />
       <ErrorAlert error={tablesError}/>
       <h3>Tables</h3>
-      <TablesList tables={tables}/>
+      <TablesList tables={tables} loadTables={loadTables} toggleSeatReserve={toggleSeatReserve}  />
       {/*{JSON.stringify(reservations)}
   {JSON.stringify(tables)}*/}
       <div>
@@ -77,5 +92,6 @@ function Dashboard({ reservationDate, setReservationDate, tables, setTables, upd
     </main>
   );
 }
+
 
 export default Dashboard;

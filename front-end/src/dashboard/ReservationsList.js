@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 function ReservationsList({reservations}){
     if(Array.isArray(reservations)){
@@ -10,7 +11,7 @@ function ReservationsList({reservations}){
                     <p>Mobile Number: {mobile_number}</p>
                     <p>People: {people}</p>
                     <p>{reservation_date}</p>
-                    <a href={`/reservations/${reservation_id}/seat`} className="btn btn-primary">Seat</a>
+                    <Link to={`/reservations/${reservation_id}/seat`} href={`/reservations/${reservation_id}`} className="btn btn-primary">Seat</Link>
                 </li>
             )
         })

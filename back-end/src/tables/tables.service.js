@@ -19,9 +19,17 @@ function read(table_id){
     return knex("tables").select("*").where({table_id})
 }
 
+function deleteSeat(updatedTable){
+    return knex("tables")
+        .select("*")
+        .where({table_id: updatedTable.table_id})
+        .update(updatedTable, "*")
+}
+
 module.exports = {
     list,
     update,
     create,
     read,
+    deleteSeat,
 }

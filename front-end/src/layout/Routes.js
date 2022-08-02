@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
-import Reservations from "./Reservations";
+import Reservations from "./Reservations/Reservations";
 import Tables from "./Tables"
 import { today } from "../utils/date-time";
 import SeatReservations from "./SeatReservations";
@@ -23,8 +23,8 @@ function Routes() {
   if(!date) date = today();
 
   const [reservationDate, setReservationDate] = useState(date);
-  const [tables, setTables] = useState([]);
-  const updateTables = (tablesList) => setTables(tablesList)
+  const [reservations, setReservations] = useState([]);
+ // const [tables, setTables] = useState([]);
 
   return (
     <Switch>
@@ -32,13 +32,13 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
      <Route exact={true} path="/reservations/:reservation_id/seat">
-        <SeatReservations tables={tables} setTables={setTables} updateTables={updateTables} />
+        <SeatReservations reservationDate={reservationDate}/>
       </Route>
       <Route path="/reservations">
-        <Reservations reservationDate={reservationDate} setReservationDate={setReservationDate}/>
+        <Reservations />
       </Route>
       <Route path="/dashboard">
-        <Dashboard reservationDate={reservationDate} setReservationDate={setReservationDate} tables={tables} setTables={setTables} updateTables={updateTables}/>
+        <Dashboard  />
       </Route>
       <Route path="/tables">
         <Tables/>

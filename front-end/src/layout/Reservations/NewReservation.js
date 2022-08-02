@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {useHistory} from "react-router-dom";
-import {createReservation} from "../utils/api";
-import ErrorAlert from "./ErrorAlert";
+import {createReservation} from "../../utils/api";
+import ErrorAlert from "../ErrorAlert";
 
-function Reservations({reservationDate, setReservationDate}){
+function NewReservation(){
     const history = useHistory();
 
     const initialFormData = {
@@ -17,6 +17,16 @@ function Reservations({reservationDate, setReservationDate}){
     
     const [formData, setFormData] = useState(initialFormData);
     const [error, setError] = useState(null);
+    const [reservationDate, setReservationDate] = useState("")
+
+    useEffect(pushToDash, [reservationDate]);
+
+    function pushToDash(){
+        if(reservationDate){
+           history.push(`/dashboard?date=${reservationDate}`);
+        }
+        
+    }
 
     const handleChange = ({target}) => {
         setFormData({
@@ -67,12 +77,11 @@ function Reservations({reservationDate, setReservationDate}){
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        validTime();   
+        validTime(); 
         setFormData(initialFormData);
         if(!error){
-            setReservationDate(formData.reservation_date)
+            setReservationDate(formData.reservation_date);
             createReservation(formData)
-                .then(()=> history.push(`/dashboard?date=${reservationDate}`))
                 .catch(setError);
         }
     }
@@ -120,4 +129,4 @@ function Reservations({reservationDate, setReservationDate}){
     )
 }
 
-export default Reservations;
+export default NewReservation;

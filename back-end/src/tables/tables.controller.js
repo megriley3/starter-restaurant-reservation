@@ -36,11 +36,19 @@ async function tableIsFree(req, res, next){
     }
 }
 
+async function tableIsOccupided(req, res, next){
+    const {table_id} = req.params;
+    let table = await tablesService.read(table_id);
+    table = table[0];
+    if(!table.reservation_id){
+        next({status: 400, message: 'Table is free.'})
+    } else {
+        res.locals.table = table;
+        next();
+    }
+}
+
 async function update(req, res, next){
-    //const {reservation_id} = req.body.data;
-    //const {table_id} = req.params;
-    //let table = await tablesService.read(table_id);
-    //table=table[0];
     const {reservation_id} = res.locals;
     let {table} = res.locals;
     table = {
@@ -76,8 +84,17 @@ async function create(req, res, next){
     res.status(201).json({data});
 }
 
+
+async function deleteSeat(req, res, next){
+    let {table} = res.locals;
+    table = {...table, reservation_id: null};
+    const data = await tablesService.deleteSeat(table);
+    res.status(202);
+}
+
 module.exports = {
     list: asyncErrorBoundary(list),
     update: [asyncErrorBoundary(enoughCapacity), asyncErrorBoundary(tableIsFree), asyncErrorBoundary(update)],
-    create: [validTableName, validCapacity, asyncErrorBoundary(create)]
+    create: [validTableName, validCapacity, asyncErrorBoundary(create)],
+    delete: [asyncErrorBoundary(tableIsOccupided), asyncErrorBoundary(deleteSeat)]
 }
