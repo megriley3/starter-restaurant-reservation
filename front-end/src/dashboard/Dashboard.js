@@ -20,6 +20,7 @@ function Dashboard() {
   const queryParams = new URLSearchParams(window.location.search);
   let date = queryParams.get("date");
   if(!date) date = today();
+  //console.log(date)
 
   const [reservations, setReservations] = useState(null)
   const [reservationsError, setReservationsError] = useState(null);
@@ -43,12 +44,12 @@ function Dashboard() {
   }
 
   function loadTables(){
-    console.log("load tables");
+    //console.log("load tables");
     const abortController = new AbortController();
     setTablesError(null);
     listTables(abortController.signal)
       .then(setTables)
-      .then(()=>console.log("setTables"))
+      //.then(()=>console.log("setTables"))
       .catch(setTablesError);
     return () => abortController.abort();
   }
@@ -68,7 +69,7 @@ function Dashboard() {
     history.push(`/dashboard?date=${reservationDate}`)
   }
 
-  console.log(seatReserve);
+  //console.log(seatReserve);
 
   return (
     <main>

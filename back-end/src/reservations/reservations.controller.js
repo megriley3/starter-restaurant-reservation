@@ -24,14 +24,14 @@ function bodyHasProperty(property){
 function validDate(){
   return function (req, res, next){
     const {data: {reservation_date} = {}} = req.body;
-    console.log(reservation_date)
+    //console.log(reservation_date)
     let resDate = reservation_date + "T00:00:00";
     resDate = new Date(reservation_date);
-    console.log(resDate, "resDate")
+    //console.log(resDate, "resDate")
     res.locals.reservation_date = resDate;
     const today = new Date();
     const day = resDate.getDay()
-    console.log(resDate.getMonth(), today.getMonth(), resDate.getDate(), today.getDate())
+    //console.log(resDate.getMonth(), today.getMonth(), resDate.getDate(), today.getDate())
     if(resDate.getTime()<today.getTime() && !(resDate.getMonth()===today.getMonth() && (resDate.getDate()+1)===today.getDate())){
       next({status: 400, message: `Reservation date has already passed.`})
     } 
