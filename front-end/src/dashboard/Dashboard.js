@@ -13,22 +13,22 @@ import TablesList from "../layout/TablesList";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard() {
+function Dashboard({ reservationDate, setReservationDate }) {
   const history = useHistory();
 
   //get the reservation date or today's date
   const queryParams = new URLSearchParams(window.location.search);
   let date = queryParams.get("date");
-  if(!date) date = today();
+  if (!date) date = today();
   //console.log(date)
 
-  const [reservations, setReservations] = useState(null)
+  const [reservations, setReservations] = useState(null);
   const [reservationsError, setReservationsError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
   const [seatReserve, setSeatReserve] = useState(false);
   const [tables, setTables] = useState([]);
 
-  const [reservationDate, setReservationDate] = useState(date);
+  // const [reservationDate, setReservationDate] = useState(date);
   const toggleSeatReserve = () => setSeatReserve(!seatReserve);
 
   useEffect(loadDashboard, [reservationDate]);
@@ -37,13 +37,13 @@ function Dashboard() {
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
-    listReservations( {date: reservationDate} , abortController.signal)
+    listReservations({ date: reservationDate }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
     return () => abortController.abort();
   }
 
-  function loadTables(){
+  function loadTables() {
     //console.log("load tables");
     const abortController = new AbortController();
     setTablesError(null);
@@ -54,19 +54,19 @@ function Dashboard() {
     return () => abortController.abort();
   }
 
-  function handleClickPrevious(){
+  function handleClickPrevious() {
     setReservationDate(previous(reservationDate));
-    history.push(`/dashboard?date=${reservationDate}`)
-  }
-  
-  function handleClickToday(){
-    setReservationDate(today())
-    history.push(`/dashboard?date=${reservationDate}`)
+    history.push(`/dashboard?date=${reservationDate}`);
   }
 
-  function handleClickNext(){
+  function handleClickToday() {
+    setReservationDate(today());
+    history.push(`/dashboard?date=${reservationDate}`);
+  }
+
+  function handleClickNext() {
     setReservationDate(next(reservationDate));
-    history.push(`/dashboard?date=${reservationDate}`)
+    history.push(`/dashboard?date=${reservationDate}`);
   }
 
   //console.log(seatReserve);
@@ -80,9 +80,13 @@ function Dashboard() {
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
       <ReservationsList reservations={reservations} />
-      <ErrorAlert error={tablesError}/>
+      <ErrorAlert error={tablesError} />
       <h3>Tables</h3>
-      <TablesList tables={tables} loadTables={loadTables} toggleSeatReserve={toggleSeatReserve}  />
+      <TablesList
+        tables={tables}
+        loadTables={loadTables}
+        toggleSeatReserve={toggleSeatReserve}
+      />
       {/*{JSON.stringify(reservations)}
   {JSON.stringify(tables)}*/}
       <div>
@@ -93,6 +97,5 @@ function Dashboard() {
     </main>
   );
 }
-
 
 export default Dashboard;
