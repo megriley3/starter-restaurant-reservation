@@ -1,17 +1,18 @@
 import React, {useState, useEffect} from "react";
-import {listTables, listReservations, getReservation} from "../utils/api";
+import {listTables, getReservation} from "../utils/api";
 import {useParams} from "react-router-dom";
 import ErrorAlert from "./ErrorAlert";
 
 function SeatReservations({reservationDate}){
   const [error, setError] = useState(null);
   const [tables, setTables] = useState([]);
-  //const[people, setPeople] = useState(null);
+  const[people, setPeople] = useState(null);
   const[seat, setSeat] = useState("");
   const reservation_id = useParams().reservation_id;
+  console.log(reservation_id, "resId")
 
   useEffect(loadTables, []);
-  //useEffect(loadPeople, []);
+  useEffect(loadPeople, []);
   
   function loadTables(){
     const abortController = new AbortController();
@@ -22,24 +23,15 @@ function SeatReservations({reservationDate}){
     return () => abortController.abort();
   }
 
- /* function loadPeople(){
+  function loadPeople(){
+    console.log(reservation_id, "resId")
     const abortController = new AbortController();
     setError(null);
     getReservation(reservation_id, abortController.signal)
-      .then(setPeople)
+      .then((returnedPeople) => setPeople(returnedPeople.people))
       .catch(setError);
     return () => abortController.abort();
   }
-
- function loadReservations() {
-    const abortController = new AbortController();
-    setError(null);
-    listReservations( {date: reservationDate} , abortController.signal)
-      .then(setReservations)
-      .catch(setError);
-    return () => abortController.abort();
-  }
-
 
   /*const options =  tables.map((table, index) => {
     if (!table.reservation_id && table.capacity>=reservation.people) {
@@ -59,7 +51,7 @@ function SeatReservations({reservationDate}){
   
   const handleChange = ({target}) => setSeat(target.value);
 
-  //console.log(people)
+  console.log(people, "people")
 
 
   console.log(error, !error);
