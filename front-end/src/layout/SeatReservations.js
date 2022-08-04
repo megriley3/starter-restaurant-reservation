@@ -9,7 +9,7 @@ function SeatReservations({reservationDate}){
   const[people, setPeople] = useState(null);
   const[seat, setSeat] = useState("");
   const reservation_id = useParams().reservation_id;
-  console.log(reservation_id, "resId")
+  //console.log(reservation_id, "resId")
 
   useEffect(loadTables, []);
   useEffect(loadPeople, []);
@@ -24,7 +24,7 @@ function SeatReservations({reservationDate}){
   }
 
   function loadPeople(){
-    console.log(reservation_id, "resId")
+    //console.log(reservation_id, "resId")
     const abortController = new AbortController();
     setError(null);
     getReservation(reservation_id, abortController.signal)
@@ -45,16 +45,16 @@ function SeatReservations({reservationDate}){
   
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("submitted");
+    //console.log("submitted");
     setError({message: `Select a table.`})
   }
   
   const handleChange = ({target}) => setSeat(target.value);
 
-  console.log(people, "people")
+  //console.log(people, "people")
 
 
-  console.log(error, !error);
+  //console.log(error, !error);
 
   return(
     <>

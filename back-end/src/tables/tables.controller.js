@@ -13,6 +13,7 @@ function bodyHasProperty(property) {
       if (data[property]) {
         return next();
       }
+      console.log(`missing ${property}`)
       next({ status: 400, message: `Must include a ${property}` });
     };
   }
@@ -21,6 +22,7 @@ function bodyHasProperty(property) {
     return function(req, res, next) {
     const table = req.body.data;
     if(table.table_name.length<2){
+        console.log("invalid table name", table.table_name)
          return next({
             status: 400,
              message: 'table_name must be at least 2 characters long.'
@@ -37,6 +39,7 @@ function validCapacity(){
         const {table} = res.locals;
         const isNumber = Number.isInteger(table.capacity)
         if(table.capacity<1 || (!isNumber)){
+            console.log("invalid capacity", table.capacity)
             return next({status: 400, message: 'Table capacity must be a number with a value at least 1.'})
         } 
         next()

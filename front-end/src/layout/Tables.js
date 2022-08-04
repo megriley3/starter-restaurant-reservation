@@ -8,7 +8,7 @@ function Tables(){
 
     const initialTableData= {
         table_name: "",
-        capacity: 1,
+        capacity: "",
     }
 
     const [tableData, setTableData] = useState(initialTableData)
@@ -16,18 +16,26 @@ function Tables(){
    
 
     const handleChange = ({target})=>{
-        setTableData({
-            ...tableData,
-            [target.name]: target.value,
-        })
+        if(target.name ==="capacity"){
+            setTableData({
+                ...tableData,
+                capacity: Number(target.value)
+            })
+        } else{
+            setTableData({
+                ...tableData,
+                [target.name]: target.value,
+            })
+        }
+
     }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setTableData(initialTableData);
-        createTable(tableData)
-            .then(history.push("/"))
-            .catch(setError)
+            setTableData(initialTableData);
+            createTable(tableData)
+                .then(history.push("/"))
+                .catch(setError)
     }
 
 
