@@ -22,7 +22,8 @@ function Routes() {
   if (!date) date = today();
 
   const [reservationDate, setReservationDate] = useState(date);
-  const [reservations, setReservations] = useState([]);
+  const [seatReserved, setSeatReserved] = useState(null);
+  //const [reservations, setReservations] = useState([]);
   // const [tables, setTables] = useState([]);
 
   return (
@@ -31,7 +32,7 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route exact={true} path="/reservations/:reservation_id/seat">
-        <SeatReservations reservationDate={reservationDate} />
+        <SeatReservations seatReserved={seatReserved} setSeatReserved={setSeatReserved} />
       </Route>
       <Route path="/reservations">
         <Reservations
@@ -43,6 +44,8 @@ function Routes() {
         <Dashboard
           reservationDate={reservationDate}
           setReservationDate={setReservationDate}
+          seatReserved={seatReserved}
+          setSeatReserved={setSeatReserved}
         />
       </Route>
       <Route path="/tables">

@@ -14,8 +14,8 @@ import TablesList from "../layout/TablesList";
  * @returns {JSX.Element}
  */
 
-function Dashboard({ reservationDate, setReservationDate }) {
-  const history = useHistory();
+function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatReserved }) {
+  const history = useHistory();  
 
   //get the reservation date or today's date
   //const queryParams = new URLSearchParams(window.location.search);
@@ -26,14 +26,12 @@ function Dashboard({ reservationDate, setReservationDate }) {
   const [reservations, setReservations] = useState(null);
   const [reservationsError, setReservationsError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
-  //const [seatReserve, setSeatReserve] = useState(false);
   const [tables, setTables] = useState([]);
 
   // const [reservationDate, setReservationDate] = useState(date);
-  //const toggleSeatReserve = () => setSeatReserve(!seatReserve);
 
   useEffect(loadDashboard, [reservationDate]);
-  useEffect(loadTables, [/*seatReserve*/]);
+  useEffect(loadTables, [seatReserved]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -45,12 +43,13 @@ function Dashboard({ reservationDate, setReservationDate }) {
   }
 
   function loadTables() {
-    //console.log("load tables");
+    console.log(seatReserved, 'seatReserved')
+    console.log("load tables");
     const abortController = new AbortController();
     setTablesError(null);
     listTables(abortController.signal)
       .then(setTables)
-      //.then(()=>console.log("setTables"))
+      .then(()=>console.log("setTables"))
       .catch(setTablesError);
     return () => abortController.abort();
   }
@@ -70,8 +69,6 @@ function Dashboard({ reservationDate, setReservationDate }) {
     history.push(`/dashboard?date=${reservationDate}`);
   }
 
-  //console.log(seatReserve);
-
   return (
     <main>
       <h1>Dashboard</h1>
@@ -86,10 +83,12 @@ function Dashboard({ reservationDate, setReservationDate }) {
       <TablesList
         tables={tables}
         loadTables={loadTables}
+        seatReserved={seatReserved}
+        setSeatReserved={setSeatReserved}
         //toggleSeatReserve={toggleSeatReserve}
       />
-      {/*{JSON.stringify(reservations)}
-  {JSON.stringify(tables)}*/}
+      {/*{JSON.stringify(reservations)}*/}
+  {JSON.stringify(tables)}
       <div>
         <button onClick={handleClickPrevious}>Previous</button>
         <button onClick={handleClickToday}>Today</button>

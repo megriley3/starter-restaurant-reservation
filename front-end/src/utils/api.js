@@ -109,7 +109,6 @@ export async function createTable(table, signal){
 
 export async function getReservation(reservation_id, signal){
   const url = `${API_BASE_URL}/reservations/${reservation_id}`;
-  console.log(url)
   return await fetchJson(url, {headers, signal}, []);
 }
 

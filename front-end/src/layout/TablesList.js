@@ -1,23 +1,21 @@
 import React from "react";
 import { deleteSeating, listTables } from "../utils/api";
 
-function TablesList({tables, loadTables, toggleSeatReserve}){
-
-
+function TablesList({tables, loadTables, setSeatReserved, seatReserved}){
+  
     const handleClick = (event) => {
         event.preventDefault();
         const result = window.confirm("Is this table ready to seat new guests? This cannot be undone.");
         if(result){
             deleteSeating(event.target.value);
             loadTables();
-            toggleSeatReserve();
         }
     }
 
     if(Array.isArray(tables)){
         const rows = tables.map((table, index) => {
             const {table_name, capacity, reservation_id, table_id} = table;
-            if(reservation_id){
+            if(reservation_id || seatReserved===table_id){
                 return (
                     <tr key = {index}>
                         <td>{table_name}</td>

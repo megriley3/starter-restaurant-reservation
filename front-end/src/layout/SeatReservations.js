@@ -1,17 +1,17 @@
 import React, {useState, useEffect} from "react";
-import {listTables, getReservation} from "../utils/api";
-import {useParams} from "react-router-dom";
+import {listTables, getReservation, addReservation} from "../utils/api";
+import {useParams, useHistory} from "react-router-dom";
 import ErrorAlert from "./ErrorAlert";
 
-function SeatReservations({reservationDate}){
+function SeatReservations({seatReserved, setSeatReserved}){
   const [error, setError] = useState(null);
   const [tables, setTables] = useState([]);
   const[people, setPeople] = useState(null);
   const[seat, setSeat] = useState("");
   const reservation_id = useParams().reservation_id;
-  //console.log(reservation_id, "resId")
+  const history = useHistory();
 
-  useEffect(loadTables, []);
+  useEffect(loadTables, [seat]);
   useEffect(loadPeople, []);
   
   function loadTables(){
@@ -24,7 +24,6 @@ function SeatReservations({reservationDate}){
   }
 
   function loadPeople(){
-    //console.log(reservation_id, "resId")
     const abortController = new AbortController();
     setError(null);
     getReservation(reservation_id, abortController.signal)
@@ -34,7 +33,7 @@ function SeatReservations({reservationDate}){
   }
 
   const options =  tables.map((table, index) => {
-    if (!table.reservation_id && table.capacity>=people) {
+    if (!table.reservation_id) {
       return (
         <option key={table.table_name} value={table.table_name}>
           {table.table_name} - {table.capacity}
@@ -42,19 +41,31 @@ function SeatReservations({reservationDate}){
       );
     }
   });
+
+  const validCapacity = (table) => {
+    if(people>table.capacity){
+      setError({message: `table capacity is not large enough.`})
+    }
+  }
   
   const handleSubmit = (event) => {
     event.preventDefault();
-    //console.log("submitted");
-    setError({message: `Select a table.`})
+    if(!seat){
+      setError({message: `Select a table.`})
+    } else{
+      const table = tables.find((table) => table.table_name === seat);
+      validCapacity(table);
+      if(table.capacity>=people) {
+        addReservation(reservation_id, table.table_id)
+          .then(setSeatReserved(table.table_id))
+          .then(history.push("/"))
+          .catch(setError);
+      }
+    }
+
   }
   
-  const handleChange = ({target}) => setSeat(target.value);
-
-  //console.log(people, "people")
-
-
-  //console.log(error, !error);
+  const handleChange = ({target}) =>  setSeat(target.value);
 
   return(
     <>
@@ -67,7 +78,7 @@ function SeatReservations({reservationDate}){
       </select>
       <button type="submit">Submit</button>
     </form>
-    <button onClick={()=>console.log("cancelled")}>Cancel</button>
+    <button onClick={()=>history.goBack()}>Cancel</button>
     </>
   )
 }
