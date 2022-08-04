@@ -8,7 +8,7 @@ function list(date) {
 }
 
 function read(reservation_id) {
-  return knex("reservations").select("people").where({ reservation_id: reservation_id }).first();
+  return knex("reservations").select("*").where({ reservation_id: reservation_id }).first();
 }
 
 function create(reservation) {

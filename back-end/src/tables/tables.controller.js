@@ -43,7 +43,14 @@ function validCapacity(){
 }
 }
 
-  async function tableIsOccupided(req, res, next){
+async function create(req, res, next){
+    const {table} = res.locals;
+    const data = await tablesService.create(table);
+    res.status(201).json({data});
+}
+
+
+async function tableIsOccupided(req, res, next){
     const {table_id} = req.params;
     let table = await tablesService.read(table_id);
     table = table[0];
@@ -94,13 +101,6 @@ async function update(req, res, next){
     const data = await tablesService.update(table);
     res.json({data});
 }
-
-async function create(req, res, next){
-    const {table} = res.locals;
-    const data = await tablesService.create(table);
-    res.status(201).json({data});
-}
-
 
 async function deleteSeat(req, res, next){
     let {table} = res.locals;

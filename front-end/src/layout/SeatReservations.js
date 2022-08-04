@@ -33,15 +33,15 @@ function SeatReservations({reservationDate}){
     return () => abortController.abort();
   }
 
-  /*const options =  tables.map((table, index) => {
-    if (!table.reservation_id && table.capacity>=reservation.people) {
+  const options =  tables.map((table, index) => {
+    if (!table.reservation_id && table.capacity>=people) {
       return (
         <option key={table.table_name} value={table.table_name}>
           {table.table_name} - {table.capacity}
         </option>
       );
     }
-  });*/
+  });
   
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -60,11 +60,10 @@ function SeatReservations({reservationDate}){
     <>
     <h1>Seat Reservation</h1>
     <ErrorAlert error={error}/>
-    {JSON.stringify(tables)}{/*JSON.stringify(reservations)*/}
     <form name="seatReservation" onSubmit={handleSubmit}>
       <select name="table_id" id="table_id" onChange={handleChange}>
         <option value="">Select a Table</option>
-        
+        {options}
       </select>
       <button type="submit">Submit</button>
     </form>

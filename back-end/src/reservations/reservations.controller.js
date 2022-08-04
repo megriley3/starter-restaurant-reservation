@@ -128,8 +128,6 @@ async function create(req, res) {
 
 async function read(req, res, next){
   const {reservation_id} = req.params;
-  console.log(reservation_id);
-  //const reservation_id = 1;
   const data = await reservationsService.read(reservation_id);
   res.status(200).json({data})
 }
