@@ -13,26 +13,27 @@ import TablesList from "../layout/TablesList";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
+
 function Dashboard({ reservationDate, setReservationDate }) {
   const history = useHistory();
 
   //get the reservation date or today's date
-  const queryParams = new URLSearchParams(window.location.search);
-  let date = queryParams.get("date");
-  if (!date) date = today();
+  //const queryParams = new URLSearchParams(window.location.search);
+  //let date = queryParams.get("date");
+  //if (!date) date = today();
   //console.log(date)
 
   const [reservations, setReservations] = useState(null);
   const [reservationsError, setReservationsError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
-  const [seatReserve, setSeatReserve] = useState(false);
+  //const [seatReserve, setSeatReserve] = useState(false);
   const [tables, setTables] = useState([]);
 
   // const [reservationDate, setReservationDate] = useState(date);
-  const toggleSeatReserve = () => setSeatReserve(!seatReserve);
+  //const toggleSeatReserve = () => setSeatReserve(!seatReserve);
 
   useEffect(loadDashboard, [reservationDate]);
-  useEffect(loadTables, [seatReserve]);
+  useEffect(loadTables, [/*seatReserve*/]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -85,7 +86,7 @@ function Dashboard({ reservationDate, setReservationDate }) {
       <TablesList
         tables={tables}
         loadTables={loadTables}
-        toggleSeatReserve={toggleSeatReserve}
+        //toggleSeatReserve={toggleSeatReserve}
       />
       {/*{JSON.stringify(reservations)}
   {JSON.stringify(tables)}*/}

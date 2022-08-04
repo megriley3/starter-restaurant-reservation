@@ -7,6 +7,54 @@ async function list(req, res, next){
     return res.json({data})
 }
 
+function bodyHasProperty(property) {
+    return function (req, res, next) {
+      const { data = {} } = req.body;
+      if (data[property]) {
+        return next();
+      }
+      next({ status: 400, message: `Must include a ${property}` });
+    };
+  }
+
+  function validTableName(){
+    return function(req, res, next) {
+    const table = req.body.data;
+    if(table.table_name.length<2){
+         return next({
+            status: 400,
+             message: 'table_name must be at least 2 characters long.'
+            });
+    } 
+        res.locals.table = table;
+        next();
+    
+    }
+}
+
+function validCapacity(){
+    return function(req, res, next){
+        const {table} = res.locals;
+        const isNumber = Number.isInteger(table.capacity)
+        if(table.capacity<1 || (!isNumber)){
+            return next({status: 400, message: 'Table capacity must be a number with a value at least 1.'})
+        } 
+        next()
+}
+}
+
+  async function tableIsOccupided(req, res, next){
+    const {table_id} = req.params;
+    let table = await tablesService.read(table_id);
+    table = table[0];
+    if(!table.reservation_id){
+        next({status: 400, message: 'Table is free.'})
+    } else {
+        res.locals.table = table;
+        next();
+    }
+}
+
 async function enoughCapacity(req, res, next){
     const {reservation_id} = req.body.data;
     let people = await reservationsService.read(reservation_id);
@@ -36,18 +84,6 @@ async function tableIsFree(req, res, next){
     }
 }
 
-async function tableIsOccupided(req, res, next){
-    const {table_id} = req.params;
-    let table = await tablesService.read(table_id);
-    table = table[0];
-    if(!table.reservation_id){
-        next({status: 400, message: 'Table is free.'})
-    } else {
-        res.locals.table = table;
-        next();
-    }
-}
-
 async function update(req, res, next){
     const {reservation_id} = res.locals;
     let {table} = res.locals;
@@ -57,25 +93,6 @@ async function update(req, res, next){
     }
     const data = await tablesService.update(table);
     res.json({data});
-}
-
-function validTableName(req, res, next){
-    const table = req.body.data;
-    if(table.table_name.length>=2){
-        res.locals.table = table;
-        next();
-    } else{
-         next({status: 400, message: 'Table name must be at least 2 characters long.'});
-        }
-}
-
-function validCapacity(req, res, next){
-    const {table} = res.locals;
-    if(Number(table.capacity)>=1){
-        next();
-    } else{
-        next({status: 400, message: 'Table capacity must be at least 1.'})
-    }
 }
 
 async function create(req, res, next){
@@ -95,6 +112,6 @@ async function deleteSeat(req, res, next){
 module.exports = {
     list: asyncErrorBoundary(list),
     update: [asyncErrorBoundary(enoughCapacity), asyncErrorBoundary(tableIsFree), asyncErrorBoundary(update)],
-    create: [validTableName, validCapacity, asyncErrorBoundary(create)],
+    create: [bodyHasProperty("table_name"), bodyHasProperty("capacity"), validTableName(), validCapacity(), asyncErrorBoundary(create)],
     delete: [asyncErrorBoundary(tableIsOccupided), asyncErrorBoundary(deleteSeat)]
 }

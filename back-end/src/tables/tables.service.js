@@ -12,7 +12,7 @@ function update(updatedTable){
 }
 
 function create(table){
-    return knex("tables").insert(table)
+    return knex("tables").insert(table).returning("*").then((createdTable) => createdTable[0])
 }
 
 function read(table_id){

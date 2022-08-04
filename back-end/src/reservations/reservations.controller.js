@@ -26,14 +26,19 @@ function validDate() {
     const { data: { reservation_date } = {} } = req.body;
 
     const dateFormat = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
-    //console.log(reservation_date)
+    //console.log(reservation_date);
     let resDate = reservation_date + "T00:00:00";
     resDate = new Date(reservation_date);
-    //console.log(resDate, "resDate")
+    //console.log(resDate, "resDate");
     res.locals.reservation_date = resDate;
     const today = new Date();
     const day = resDate.getDay();
-    //console.log(resDate.getMonth(), today.getMonth(), resDate.getDate(), today.getDate())
+    /* console.log(
+      resDate.getMonth(),
+      today.getMonth(),
+      resDate.getDate(),
+      today.getDate()
+    );*/
     if (!reservation_date.match(dateFormat)) {
       return next({
         status: 400,
@@ -96,7 +101,7 @@ function validTime() {
   };
 }
 
-// to validate the peopel
+// to validate the people
 function validPeople() {
   return function (req, res, next) {
     const { data: { people } = {} } = req.body;
@@ -110,6 +115,7 @@ function validPeople() {
     next();
   };
 }
+
 async function create(req, res) {
   const newReservation = req.body.data;
   const now = new Date().toISOString();
@@ -120,6 +126,12 @@ async function create(req, res) {
   res.status(201).json({ data });
 }
 
+async function read(req, res, next){
+  const {reservation_id} = req.body.data;
+  const data = await reservationsService.read(reservation_id);
+  res.status(200).json({data})
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
@@ -127,11 +139,12 @@ module.exports = {
     bodyHasProperty("last_name"),
     bodyHasProperty("mobile_number"),
     bodyHasProperty("reservation_date"),
+    bodyHasProperty("reservation_time"),
     validDate(),
     validTime(),
-    bodyHasProperty("reservation_time"),
     bodyHasProperty("people"),
     validPeople(),
     asyncErrorBoundary(create),
   ],
+  read
 };

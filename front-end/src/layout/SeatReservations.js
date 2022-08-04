@@ -1,18 +1,17 @@
 import React, {useState, useEffect} from "react";
-import {listTables, listReservations} from "../utils/api";
+import {listTables, listReservations, getReservation} from "../utils/api";
 import {useParams} from "react-router-dom";
 import ErrorAlert from "./ErrorAlert";
 
 function SeatReservations({reservationDate}){
   const [error, setError] = useState(null);
   const [tables, setTables] = useState([]);
-  const [reservations, setReservations] = useState([]);
+  //const[people, setPeople] = useState(null);
   const[seat, setSeat] = useState("");
   const reservation_id = useParams().reservation_id;
-  console.log(reservation_id, reservations)
 
   useEffect(loadTables, []);
-  //useEffect(loadReservations, []);
+  //useEffect(loadPeople, []);
   
   function loadTables(){
     const abortController = new AbortController();
@@ -23,7 +22,16 @@ function SeatReservations({reservationDate}){
     return () => abortController.abort();
   }
 
-  function loadReservations() {
+ /* function loadPeople(){
+    const abortController = new AbortController();
+    setError(null);
+    getReservation(reservation_id, abortController.signal)
+      .then(setPeople)
+      .catch(setError);
+    return () => abortController.abort();
+  }
+
+ function loadReservations() {
     const abortController = new AbortController();
     setError(null);
     listReservations( {date: reservationDate} , abortController.signal)
@@ -32,8 +40,6 @@ function SeatReservations({reservationDate}){
     return () => abortController.abort();
   }
 
-  const reservation = reservations.find((reservation) => reservation.reservation_id === Number(reservation_id));
-  console.log(reservation, "reservations")
 
   /*const options =  tables.map((table, index) => {
     if (!table.reservation_id && table.capacity>=reservation.people) {
@@ -53,6 +59,8 @@ function SeatReservations({reservationDate}){
   
   const handleChange = ({target}) => setSeat(target.value);
 
+  //console.log(people)
+
 
   console.log(error, !error);
 
@@ -60,7 +68,7 @@ function SeatReservations({reservationDate}){
     <>
     <h1>Seat Reservation</h1>
     <ErrorAlert error={error}/>
-    {JSON.stringify(tables)}{JSON.stringify(reservations)}
+    {JSON.stringify(tables)}{/*JSON.stringify(reservations)*/}
     <form name="seatReservation" onSubmit={handleSubmit}>
       <select name="table_id" id="table_id" onChange={handleChange}>
         <option value="">Select a Table</option>

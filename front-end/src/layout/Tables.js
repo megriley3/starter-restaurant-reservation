@@ -8,7 +8,7 @@ function Tables(){
 
     const initialTableData= {
         table_name: "",
-        capacity: "",
+        capacity: 1,
     }
 
     const [tableData, setTableData] = useState(initialTableData)
