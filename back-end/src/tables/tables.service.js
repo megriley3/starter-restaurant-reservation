@@ -16,7 +16,10 @@ function create(table){
 }
 
 function read(table_id){
-    return knex("tables").select("*").where({table_id})
+    return knex("tables")
+        .select("*")
+        .where({table_id})
+        .then((returnedTable) => returnedTable[0])
 }
 
 function deleteSeat(updatedTable){

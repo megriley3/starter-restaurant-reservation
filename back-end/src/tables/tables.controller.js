@@ -43,46 +43,38 @@ function validCapacity(){
 }
 }
 
+
 async function create(req, res, next){
     const {table} = res.locals;
     const data = await tablesService.create(table);
     res.status(201).json({data});
 }
 
-
-async function tableIsOccupided(req, res, next){
-    const {table_id} = req.params;
-    let table = await tablesService.read(table_id);
-    table = table[0];
-    if(!table.reservation_id){
-        next({status: 400, message: 'Table is free.'})
-    } else {
-        res.locals.table = table;
-        next();
+async function resExists(req, res, next){
+    const {reservation_id} = req.body.data;
+    const reservation = await reservationsService.read(reservation_id);
+    if(!reservation){
+        return next({status: 404, message: `reservation_id, ${reservation_id} does not exist`})
     }
+    res.locals.reservation = reservation;
+    res.locals.reservation_id = reservation_id;
+    next();
 }
 
 async function enoughCapacity(req, res, next){
-    const {reservation_id} = req.body.data;
-    let people = await reservationsService.read(reservation_id);
-    people = people[0];
-    people=people.people;
+    const {people} = res.locals.reservation;
     const {table_id} = req.params;
-    let table = await tablesService.read(table_id);
-    table=table[0];
+    const table = await tablesService.read(table_id);
     if(table.capacity<people){
-        next({status: 400, message: 'Table capacity is less than the reservation people.'})
+       return next({status: 400, message: 'Table capacity is less than the reservation people.'})
     } else {
         res.locals.table = table;
-        res.locals.reservation_id = reservation_id;
         next();
     }
 }
 
 async function tableIsFree(req, res, next){
-    const {table_id} = req.params;
-    let table = await tablesService.read(table_id);
-    table=table[0];
+    const {table} = res.locals;
     if(!table.reservation_id){
         res.locals.table = table;
         next()
@@ -102,6 +94,17 @@ async function update(req, res, next){
     res.json({data});
 }
 
+async function tableIsOccupided(req, res, next){
+    const {table_id} = req.params;
+    const table = await tablesService.read(table_id);
+    if(!table.reservation_id){
+        next({status: 400, message: 'Table is free.'})
+    } else {
+        res.locals.table = table;
+        next();
+    }
+}
+
 async function deleteSeat(req, res, next){
     let {table} = res.locals;
     table = {...table, reservation_id: null};
@@ -111,7 +114,7 @@ async function deleteSeat(req, res, next){
 
 module.exports = {
     list: asyncErrorBoundary(list),
-    update: [asyncErrorBoundary(enoughCapacity), asyncErrorBoundary(tableIsFree), asyncErrorBoundary(update)],
+    update: [bodyHasProperty("reservation_id"), asyncErrorBoundary(resExists), asyncErrorBoundary(enoughCapacity), asyncErrorBoundary(tableIsFree), asyncErrorBoundary(update)],
     create: [bodyHasProperty("table_name"), bodyHasProperty("capacity"), validTableName(), validCapacity(), asyncErrorBoundary(create)],
     delete: [asyncErrorBoundary(tableIsOccupided), asyncErrorBoundary(deleteSeat)]
 }
