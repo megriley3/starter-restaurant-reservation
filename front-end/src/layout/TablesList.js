@@ -8,10 +8,11 @@ function TablesList({tables, loadTables, setSeatReserved, seatReserved, seatDele
         const result = window.confirm("Is this table ready to seat new guests? This cannot be undone.");
         if(result){
             setSeatReserved(null)
-            deleteSeating(event.target.value);
-            setSeatDeleted(event.target.value);
-            loadTables();
-            console.log("deleted")
+            deleteSeating(event.target.value)
+                .then(setSeatDeleted(event.target.value))
+                .then(loadTables)
+            //console.log("deleted")
+            //console.log("seatDeleted", seatDeleted)
         }
     }
 
@@ -19,7 +20,6 @@ function TablesList({tables, loadTables, setSeatReserved, seatReserved, seatDele
         const rows = tables.map((table, index) => {
             const {table_name, capacity, reservation_id, table_id} = table;
             if(reservation_id || seatReserved===table_id){
-                console.log("exists")
                 return (
                     <tr key = {index}>
                         <td>{table_name}</td>

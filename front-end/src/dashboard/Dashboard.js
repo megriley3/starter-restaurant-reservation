@@ -36,30 +36,33 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
   }
 
   function loadTables() {
-    console.log(seatReserved, 'seatReserved')
-    console.log("load tables");
+    //console.log(seatReserved, 'seatReserved')
+    //console.log("load tables");
     const abortController = new AbortController();
     setTablesError(null);
     listTables(abortController.signal)
       .then(setTables)
-      .then(()=>console.log("setTables"))
+      //.then(()=>console.log("setTables"))
       .catch(setTablesError);
     return () => abortController.abort();
   }
 
   function handleClickPrevious() {
-    setReservationDate(previous(reservationDate));
-    history.push(`/dashboard?date=${reservationDate}`);
+    const newDate = previous(reservationDate);
+    setReservationDate(newDate);
+    history.push(`/dashboard?date=${newDate}`);
   }
 
   function handleClickToday() {
-    setReservationDate(today());
-    history.push(`/dashboard?date=${reservationDate}`);
+    const newDate = today();
+    setReservationDate(newDate);
+    history.push(`/dashboard?date=${newDate}`);
   }
 
   function handleClickNext() {
-    setReservationDate(next(reservationDate));
-    history.push(`/dashboard?date=${reservationDate}`);
+    const newDate = next(reservationDate);
+    setReservationDate(newDate);
+    history.push(`/dashboard?date=${newDate}`);
   }
 
   return (
