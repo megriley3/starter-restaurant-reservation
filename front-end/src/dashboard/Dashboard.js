@@ -15,23 +15,16 @@ import TablesList from "../layout/TablesList";
  */
 
 function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatReserved }) {
-  const history = useHistory();  
-
-  //get the reservation date or today's date
-  //const queryParams = new URLSearchParams(window.location.search);
-  //let date = queryParams.get("date");
-  //if (!date) date = today();
-  //console.log(date)
+  const history = useHistory(); 
 
   const [reservations, setReservations] = useState(null);
   const [reservationsError, setReservationsError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
   const [tables, setTables] = useState([]);
-
-  // const [reservationDate, setReservationDate] = useState(date);
+  const [seatDeleted, setSeatDeleted] = useState(null);
 
   useEffect(loadDashboard, [reservationDate]);
-  useEffect(loadTables, [seatReserved]);
+  useEffect(loadTables, [seatReserved, seatDeleted]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -85,10 +78,11 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
         loadTables={loadTables}
         seatReserved={seatReserved}
         setSeatReserved={setSeatReserved}
-        //toggleSeatReserve={toggleSeatReserve}
+        seatDeleted={seatDeleted}
+        setSeatDeleted={setSeatDeleted}
       />
-      {/*{JSON.stringify(reservations)}*/}
-  {JSON.stringify(tables)}
+      {/*{JSON.stringify(reservations)}}
+  {JSON.stringify(tables)}*/}
       <div>
         <button onClick={handleClickPrevious}>Previous</button>
         <button onClick={handleClickToday}>Today</button>

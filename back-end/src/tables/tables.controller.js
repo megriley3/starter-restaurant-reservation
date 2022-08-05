@@ -118,7 +118,7 @@ async function deleteSeat(req, res, next){
     let {table} = res.locals;
     table = {...table, reservation_id: null};
     const data = await tablesService.deleteSeat(table);
-    res.sendStatus(200);
+    res.status(200).json({data});
 }
 
 module.exports = {

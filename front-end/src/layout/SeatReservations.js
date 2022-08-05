@@ -76,6 +76,7 @@ function SeatReservations({seatReserved, setSeatReserved}){
         <option value="">Select a Table</option>
         {options}
       </select>
+      <br/>
       <button type="submit">Submit</button>
     </form>
     <button onClick={()=>history.goBack()}>Cancel</button>
