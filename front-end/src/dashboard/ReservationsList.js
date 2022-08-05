@@ -5,9 +5,10 @@ function ReservationsList({reservations, seatReserved}){
     if(Array.isArray(reservations)){
         const list = reservations.map((reservation, index) => {
             const {reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status} = reservation;
-            console.log(seatReserved.reservation_id, "seatReserved", reservation_id, "resId", Number(seatReserved.reservation_id)===reservation_id)
-            
-            if(status==="seated" || Number(seatReserved.reservation_id)===reservation_id ) {
+            console.log(seatReserved.reservation_id, "seatReserved", reservation_id, "resId", status, seatReserved.finishedRes, "finishedId")
+            if(status==="finished" || Number(seatReserved.finishedRes)===reservation_id){
+                return null
+            } else if(status==="seated" || Number(seatReserved.reservation_id)===reservation_id ) {
                 return (
                     <tr key={index}>
                         <td>{reservation_time}</td>

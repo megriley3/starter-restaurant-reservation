@@ -116,13 +116,22 @@ function validPeople() {
   };
 }
 
+function validStatus(){
+  return function(req, res, next){
+    const {status} = req.body.data;
+    if(status==="seated" || status==="finished"){
+      return next({status: 400, message: `Reservation must not be seated or finished to reserve.`})
+    }
+    next();
+  }
+}
+
 async function create(req, res) {
   const newReservation = req.body.data;
   const now = new Date().toISOString();
   newReservation.created_at = now;
   newReservation.updated_at = now;
   const data = await reservationsService.create(newReservation);
-
   res.status(201).json({ data });
 }
 
@@ -132,20 +141,50 @@ async function read(req, res, next){
   res.status(200).json({data})
 }
 
-async function update(req, res){
+async function resExists(req, res, next){
   const {reservation_id} = req.params;
-  console.log(reservation_id);
-  const {status} = req.body.data;
-  console.log(status);
-  let reservation = await reservationsService.read(reservation_id);
-  console.log(reservation, "res")
+  const reservation = await reservationsService.read(reservation_id);
+  if(!reservation){
+    return next({status: 404, message: `reservation, ${reservation_id} not found.`})
+  } else{
+    res.locals.reservation = reservation;
+    next();
+  }
+}
+
+function statusIsKnown(){
+  return function(req, res, next){
+    const {status} = req.body.data;
+    if(status!=="seated" && status!=="finished" && status!="booked"){
+      return next({status: 400, message: `status is unknown`})
+    } else {
+      res.locals.status = status;
+      return next();
+    }
+  }
+}
+
+function statusIsFinished(){
+  return function(req, res, next){
+    const {reservation} = res.locals;
+    if(reservation.status === "finished"){
+      return next({status: 400, message: `reservation is finished`})
+    } else {
+      return next();
+    }
+    
+  }
+}
+
+async function update(req, res){
+  const {status} = res.locals;
+  let {reservation} = res.locals;
   reservation = {
     ...reservation,
     status
-  }
-  console.log(reservation, "updated")
+  };
   const data = await reservationsService.update(reservation);
-  res.json({data})
+  res.status(200).json({data})
 }
 
 module.exports = {
@@ -160,8 +199,9 @@ module.exports = {
     validTime(),
     bodyHasProperty("people"),
     validPeople(),
+    validStatus(),
     asyncErrorBoundary(create),
   ],
   read,
-  update
+  update: [asyncErrorBoundary(resExists), statusIsKnown(), statusIsFinished(), asyncErrorBoundary(update)]
 };

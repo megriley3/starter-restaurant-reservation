@@ -83,6 +83,28 @@ async function tableIsFree(req, res, next){
     }
 }
 
+function resIsSeated(){
+    return function(req, res, next){
+        const {status} = res.locals.reservation;
+        if(status==="seated"){
+            return next({status: 400, message: `Reservation is already seated.`})
+        }
+        else{
+            return next();
+        }
+    }
+}
+
+async function updateResStatus(req, res, next){
+    let {reservation} = res.locals;
+    reservation = {
+        ...reservation,
+        status: `seated`
+    }
+    const data = await reservationsService.update(reservation);
+    next();
+}
+
 async function update(req, res, next){
     const {reservation_id} = res.locals;
     let {table} = res.locals;
@@ -114,6 +136,17 @@ function tableIsOccupied(req, res, next){
     }
 }
 
+async function finishRes(req, res, next){
+    const {reservation_id} = res.locals.table;
+    let reservation = await reservationsService.read(reservation_id);
+    reservation = {
+        ...reservation,
+        status: "finished"
+    }
+    await reservationsService.update(reservation);
+    next();
+}
+
 async function deleteSeat(req, res, next){
     let {table} = res.locals;
     table = {...table, reservation_id: null};
@@ -123,7 +156,19 @@ async function deleteSeat(req, res, next){
 
 module.exports = {
     list: asyncErrorBoundary(list),
-    update: [bodyHasProperty("reservation_id"), asyncErrorBoundary(resExists), asyncErrorBoundary(enoughCapacity), asyncErrorBoundary(tableIsFree), asyncErrorBoundary(update)],
-    create: [bodyHasProperty("table_name"), bodyHasProperty("capacity"), validTableName(), validCapacity(), asyncErrorBoundary(create)],
-    delete: [asyncErrorBoundary(tableExists), tableIsOccupied, asyncErrorBoundary(deleteSeat)]
+    update: [
+        bodyHasProperty("reservation_id"), 
+        asyncErrorBoundary(resExists), 
+        asyncErrorBoundary(enoughCapacity), 
+        asyncErrorBoundary(tableIsFree), 
+        resIsSeated(),
+        asyncErrorBoundary(updateResStatus), 
+        asyncErrorBoundary(update)],
+    create: [
+        bodyHasProperty("table_name"), 
+        bodyHasProperty("capacity"), 
+        validTableName(), 
+        validCapacity(), 
+        asyncErrorBoundary(create)],
+    delete: [asyncErrorBoundary(tableExists), tableIsOccupied, asyncErrorBoundary(finishRes), asyncErrorBoundary(deleteSeat)]
 }
