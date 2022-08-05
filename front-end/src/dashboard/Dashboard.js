@@ -21,9 +21,10 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
   const [reservationsError, setReservationsError] = useState(null);
   const [tablesError, setTablesError] = useState(null);
   const [tables, setTables] = useState([]);
+  const [seatDeleted, setSeatDeleted] = useState(null)
   
   useEffect(loadDashboard, [reservationDate, seatReserved]);
-  useEffect(loadTables, [seatReserved]);
+  useEffect(loadTables, [seatReserved, seatDeleted]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -35,13 +36,10 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
   }
 
   function loadTables() {
-    //console.log(seatReserved, 'seatReserved')
-    //console.log("load tables");
     const abortController = new AbortController();
     setTablesError(null);
     listTables(abortController.signal)
       .then(setTables)
-      //.then(()=>console.log("setTables"))
       .catch(setTablesError);
     return () => abortController.abort();
   }
@@ -81,6 +79,8 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
         seatReserved={seatReserved}
         setSeatReserved={setSeatReserved}
         setTablesError={setTablesError}
+        setSeatDeleted={setSeatDeleted}
+        deleted={null}
       />
       {/*{JSON.stringify(reservations)}}
   {JSON.stringify(tables)}*/}
