@@ -13,7 +13,6 @@ function bodyHasProperty(property) {
       if (data[property]) {
         return next();
       }
-      console.log(`missing ${property}`)
       next({ status: 400, message: `Must include a ${property}` });
     };
   }
@@ -22,7 +21,6 @@ function bodyHasProperty(property) {
     return function(req, res, next) {
     const table = req.body.data;
     if(table.table_name.length<2){
-        console.log("invalid table name", table.table_name)
          return next({
             status: 400,
              message: 'table_name must be at least 2 characters long.'
@@ -39,7 +37,6 @@ function validCapacity(){
         const {table} = res.locals;
         const isNumber = Number.isInteger(table.capacity)
         if(table.capacity<1 || (!isNumber)){
-            console.log("invalid capacity", table.capacity)
             return next({status: 400, message: 'Table capacity must be a number with a value at least 1.'})
         } 
         next()
@@ -97,13 +94,22 @@ async function update(req, res, next){
     res.json({data});
 }
 
-async function tableIsOccupided(req, res, next){
+async function tableExists(req, res, next){
     const {table_id} = req.params;
     const table = await tablesService.read(table_id);
-    if(!table.reservation_id){
-        next({status: 400, message: 'Table is free.'})
+    if(!table){
+        next({status:404, message: `table, ${table_id} does not exist`})
     } else {
         res.locals.table = table;
+        next();
+    }
+}
+
+function tableIsOccupied(req, res, next){
+    const {table} = res.locals;
+    if(!table.reservation_id){
+        next({status: 400, message: 'Table is not occupied.'})
+    } else {
         next();
     }
 }
@@ -112,12 +118,12 @@ async function deleteSeat(req, res, next){
     let {table} = res.locals;
     table = {...table, reservation_id: null};
     const data = await tablesService.deleteSeat(table);
-    res.status(202);
+    res.sendStatus(200);
 }
 
 module.exports = {
     list: asyncErrorBoundary(list),
     update: [bodyHasProperty("reservation_id"), asyncErrorBoundary(resExists), asyncErrorBoundary(enoughCapacity), asyncErrorBoundary(tableIsFree), asyncErrorBoundary(update)],
     create: [bodyHasProperty("table_name"), bodyHasProperty("capacity"), validTableName(), validCapacity(), asyncErrorBoundary(create)],
-    delete: [asyncErrorBoundary(tableIsOccupided), asyncErrorBoundary(deleteSeat)]
+    delete: [asyncErrorBoundary(tableExists), tableIsOccupied, asyncErrorBoundary(deleteSeat)]
 }
