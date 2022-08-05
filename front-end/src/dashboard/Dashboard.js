@@ -23,7 +23,7 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
   const [tables, setTables] = useState([]);
   const [seatDeleted, setSeatDeleted] = useState(null);
 
-  useEffect(loadDashboard, [reservationDate]);
+  useEffect(loadDashboard, [reservationDate, seatReserved]);
   useEffect(loadTables, [seatReserved, seatDeleted]);
 
   function loadDashboard() {
@@ -73,7 +73,7 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
       </div>
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
-      <ReservationsList reservations={reservations} />
+      <ReservationsList reservations={reservations} seatReserved={seatReserved} />
       <ErrorAlert error={tablesError} />
       <h3>Tables</h3>
       <TablesList

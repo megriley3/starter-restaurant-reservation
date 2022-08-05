@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {listTables, getReservation, addReservation} from "../utils/api";
+import {listTables, getReservation, addReservation, updateReservationStatus} from "../utils/api";
 import {useParams, useHistory} from "react-router-dom";
 import ErrorAlert from "./ErrorAlert";
 
@@ -57,7 +57,12 @@ function SeatReservations({seatReserved, setSeatReserved}){
       validCapacity(table);
       if(table.capacity>=people) {
         addReservation(reservation_id, table.table_id)
-          .then(setSeatReserved(table.table_id))
+          .then(setSeatReserved({
+            table_id: table.table_id,
+            reservation_id: reservation_id
+          }))
+          .catch(setError);
+        updateReservationStatus(reservation_id, "seated")
           .then(history.push("/"))
           .catch(setError);
       }

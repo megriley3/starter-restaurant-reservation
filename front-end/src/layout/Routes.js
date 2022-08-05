@@ -22,7 +22,7 @@ function Routes() {
   if (!date) date = today();
 
   const [reservationDate, setReservationDate] = useState(date);
-  const [seatReserved, setSeatReserved] = useState(null);
+  const [seatReserved, setSeatReserved] = useState({table_id: null, reservation_id: null});
   //const [reservations, setReservations] = useState([]);
   // const [tables, setTables] = useState([]);
 

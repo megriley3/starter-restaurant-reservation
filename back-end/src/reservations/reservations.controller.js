@@ -132,6 +132,22 @@ async function read(req, res, next){
   res.status(200).json({data})
 }
 
+async function update(req, res){
+  const {reservation_id} = req.params;
+  console.log(reservation_id);
+  const {status} = req.body.data;
+  console.log(status);
+  let reservation = await reservationsService.read(reservation_id);
+  console.log(reservation, "res")
+  reservation = {
+    ...reservation,
+    status
+  }
+  console.log(reservation, "updated")
+  const data = await reservationsService.update(reservation);
+  res.json({data})
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
@@ -146,5 +162,6 @@ module.exports = {
     validPeople(),
     asyncErrorBoundary(create),
   ],
-  read
+  read,
+  update
 };

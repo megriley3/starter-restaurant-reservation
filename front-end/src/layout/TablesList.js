@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { deleteSeating, listTables } from "../utils/api";
+import { deleteSeating, updateReservationStatus } from "../utils/api";
 
 function TablesList({tables, loadTables, setSeatReserved, seatReserved, seatDeleted, setSeatDeleted}){
   
@@ -7,11 +7,12 @@ function TablesList({tables, loadTables, setSeatReserved, seatReserved, seatDele
         event.preventDefault();
         const result = window.confirm("Is this table ready to seat new guests? This cannot be undone.");
         if(result){
-            setSeatReserved(null)
             deleteSeating(event.target.value)
-                .then(setSeatDeleted(event.target.value))
+                .then((response) => console.log(response, "response"))
+            updateReservationStatus(seatReserved.reservation_id, "finished")
+                .then(setSeatReserved({table_id: null, reservation_id: null}))
                 .then(loadTables)
-            //console.log("deleted")
+            console.log("deleted")
             //console.log("seatDeleted", seatDeleted)
         }
     }
@@ -19,7 +20,7 @@ function TablesList({tables, loadTables, setSeatReserved, seatReserved, seatDele
     if(Array.isArray(tables)){
         const rows = tables.map((table, index) => {
             const {table_name, capacity, reservation_id, table_id} = table;
-            if(reservation_id || seatReserved===table_id){
+            if(reservation_id || seatReserved.table_id===table_id){
                 return (
                     <tr key = {index}>
                         <td>{table_name}</td>
