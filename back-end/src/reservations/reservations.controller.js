@@ -5,10 +5,16 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  * List handler for reservation resources
  */
 async function list(req, res, next) {
-  let date = req.query.date;
-  if (!date) date = new Date();
-  const data = await reservationsService.list(date);
-  res.json({ data });
+  const {mobile_number} = req.query;
+  if(mobile_number){
+    const data = await reservationsService.search(mobile_number);
+    res.json({data})
+  } else{
+    let date = req.query.date;
+    if (!date) date = new Date();
+    const data = await reservationsService.list(date);
+    res.json({ data });
+  }
 }
 
 function bodyHasProperty(property) {
