@@ -24,8 +24,6 @@ function Routes() {
 
   const [reservationDate, setReservationDate] = useState(date);
   const [seatReserved, setSeatReserved] = useState({table_id: null, reservation_id: null, finishedRes: null});
-  //const [reservations, setReservations] = useState([]);
-  // const [tables, setTables] = useState([]);
 
   return (
     <Switch>
@@ -53,7 +51,7 @@ function Routes() {
         <Tables />
       </Route>
       <Route path="/search">
-        <Search/>
+        <Search seatReserved={seatReserved}/>
       </Route>
       <Route>
         <NotFound />

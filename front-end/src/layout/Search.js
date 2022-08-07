@@ -1,26 +1,13 @@
 import React, {useState, useEffect} from "react";
+import ReservationsList from "../dashboard/ReservationsList";
 import {listReservations} from "../utils/api";
 import ErrorAlert from "./ErrorAlert";
 
-function Search(){
+function Search({seatReserved}){
     const [mobile, setMobile] = useState("");
     const [searched, setSearched] = useState(false)
     const [searchResults, setSearchResults] = useState([]);
     const [error, setError] = useState(null)
-
-   /* useEffect(loadSearchResults, [mobile]);
-
-    function loadSearchResults() {
-        const abortController = new AbortController();
-        setError(null);
-        //console.log(mobile)
-        listReservations({ mobile_number: mobile }, abortController.signal)
-          .then(setSearchResults)
-          .catch(setError);
-        return () => abortController.abort();
-      }*/
-    
-    //console.log(searched, "before");
 
     const handleChange = ({target})=>  {
         setSearched(false);
@@ -33,7 +20,6 @@ function Search(){
         listReservations({mobile_number: mobile})
             .then(setSearchResults)
             .catch(setError)
-        //console.log(searched, "after")
     }
 
     if(searched){
@@ -70,19 +56,7 @@ function Search(){
                         <button type="submit">Find</button>
                     </form>
                     <h3>Results</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Last Name</th>
-                                <th>First Name</th>
-                                <th>People</th>
-                                <th>Mobile</th>
-                            </tr>
-                        </thead>
-                        <tbody>{results}</tbody>
-                    </table>
+                    <ReservationsList reservations={searchResults} seatReserved={seatReserved} search={true}/>
                 </main>
             )
         } else {

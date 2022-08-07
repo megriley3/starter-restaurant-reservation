@@ -70,7 +70,7 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
       </div>
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
-      <ReservationsList reservations={reservations} seatReserved={seatReserved} />
+      <ReservationsList reservations={reservations} seatReserved={seatReserved} search={false}/>
       <ErrorAlert error={tablesError} />
       <h3>Tables</h3>
       <TablesList

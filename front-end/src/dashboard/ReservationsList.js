@@ -1,27 +1,31 @@
-import React from "react";
+import React, {useState} from "react";
 import {Link} from "react-router-dom";
+import ErrorAlert from "../layout/ErrorAlert";
+import { updateReservationStatus } from "../utils/api";
 
-function ReservationsList({reservations, seatReserved}){
+function ReservationsList({reservations, seatReserved, search}){
+    const [cancelled, setCancelled] = useState(false);
+    const [error, setError] = useState(null)
+
+    const handleCancel = ({target}) => {
+        console.log(cancelled);
+        const result = window.confirm("Do you want to cancel this reservation? This cannot be undone.");
+        if(result){
+            console.log(target.value)
+            setCancelled(!cancelled);
+            updateReservationStatus(target.value, "cancelled")
+                .catch(setError)
+            console.log(cancelled);
+        }
+    }
+
     if(Array.isArray(reservations)){
         const list = reservations.map((reservation, index) => {
             const {reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status} = reservation;
-            if(status==="finished" || Number(seatReserved.finishedRes)===reservation_id){
-                return null
-            } else if(status==="seated" || Number(seatReserved.reservation_id)===reservation_id ) {
+            if(search){
                 return (
                     <tr key={index}>
-                        <td>{reservation_time}</td>
-                        <td>{last_name}</td>
-                        <td>{first_name}</td>
-                        <td>{mobile_number}</td>
-                        <td>{people}</td>
                         <td>{reservation_date}</td>
-                        <td data-reservation-id-status={reservation.reservation_id}>seated</td>
-                    </tr>
-                )
-            } else if(status==="booked"){
-                return (
-                    <tr key={index}>
                         <td>{reservation_time}</td>
                         <td>{last_name}</td>
                         <td>{first_name}</td>
@@ -30,25 +34,67 @@ function ReservationsList({reservations, seatReserved}){
                         <td>{reservation_date}</td>
                         <td data-reservation-id-status={reservation.reservation_id}>{status}</td>
                         <td><Link to={`/reservations/${reservation_id}/seat`} href={`/reservations/${reservation_id}`} className="btn btn-primary">Seat</Link></td>
+                        <td><Link to={`/reservations/${reservation_id}/edit`} href={`/reservations/${reservation_id}/edit`}>Edit</Link></td>
+                        <td><button onClick={handleCancel} data-reservation-id-cancel={reservation.reservation_id} value={reservation_id}>Cancel</button></td>
+                    </tr>
+                )
+            } else if(status==="finished" || Number(seatReserved.finishedRes)===reservation_id){
+                return null
+            } else if(status==="seated" || Number(seatReserved.reservation_id)===reservation_id ) {
+                return (
+                    <tr key={index}>
+                        <td>{reservation_date}</td>
+                        <td>{reservation_time}</td>
+                        <td>{last_name}</td>
+                        <td>{first_name}</td>
+                        <td>{mobile_number}</td>
+                        <td>{people}</td>
+                        <td>{reservation_date}</td>
+                        <td data-reservation-id-status={reservation.reservation_id}>seated</td>
+                        <td></td>
+                        <td><Link to={`/reservations/${reservation_id}/edit`} href={`/reservations/${reservation_id}/edit`}>Edit</Link></td>
+                        <td><button onClick={handleCancel} data-reservation-id-cancel={reservation.reservation_id} value={reservation_id}>Cancel</button></td>
+                    </tr>
+                )
+            } else if(status==="booked"){
+                return (
+                    <tr key={index}>
+                        <td>{reservation_date}</td>
+                        <td>{reservation_time}</td>
+                        <td>{last_name}</td>
+                        <td>{first_name}</td>
+                        <td>{mobile_number}</td>
+                        <td>{people}</td>
+                        <td>{reservation_date}</td>
+                        <td data-reservation-id-status={reservation.reservation_id}>{status}</td>
+                        <td><Link to={`/reservations/${reservation_id}/seat`} href={`/reservations/${reservation_id}`} className="btn btn-primary">Seat</Link></td>
+                        <td><Link to={`/reservations/${reservation_id}/edit`} href={`/reservations/${reservation_id}/edit`}>Edit</Link></td>
+                        <td><button onClick={handleCancel} data-reservation-id-cancel={reservation.reservation_id} value={reservation_id}>Cancel</button></td>
                     </tr>
                 )
             } 
         })
         return (
-            <table>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Last Name</th>
-                        <th>First Name</th>
-                        <th>Mobile Number</th>
-                        <th>People</th>
-                        <th>Status</th>
-                        <th>Seat</th>
-                    </tr>
-                </thead>
-                <tbody>{list}</tbody>
-            </table>
+            <>
+                <ErrorAlert error={error}/>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Mobile Number</th>
+                            <th>People</th>
+                            <th>Status</th>
+                            <th>Seat</th>
+                            <th>Edit</th>
+                            <th>Cancel</th>
+                        </tr>
+                    </thead>
+                    <tbody>{list}</tbody>
+                </table>
+            </>
         )
     }
     return null    

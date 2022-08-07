@@ -1,5 +1,6 @@
 const reservationsService = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const { now } = require("moment");
 
 /**
  * List handler for reservation resources
@@ -163,7 +164,7 @@ async function resExists(req, res, next){
 function statusIsKnown(){
   return function(req, res, next){
     const {status} = req.body.data;
-    if(status!=="seated" && status!=="finished" && status!="booked"){
+    if(status!=="seated" && status!=="finished" && status!=="booked" && status!=="cancelled"){
       return next({status: 400, message: `status is unknown`})
     } else {
       res.locals.status = status;
@@ -195,6 +196,18 @@ async function update(req, res){
   res.status(200).json({data})
 }
 
+async function edit(req, res, next){
+  const {reservation} = res.locals;
+  let updatedReservation = req.body.data;
+  updatedReservation = {
+    ...reservation,
+    ...updatedReservation,
+    updated_at: new Date().toISOString(), 
+  }
+  const data = await reservationsService.update(updatedReservation);
+  res.status(200).json({data})
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [
@@ -211,5 +224,19 @@ module.exports = {
     asyncErrorBoundary(create),
   ],
   read,
-  update: [asyncErrorBoundary(resExists), statusIsKnown(), statusIsFinished(), asyncErrorBoundary(update)]
+  update: [asyncErrorBoundary(resExists), statusIsKnown(), statusIsFinished(), asyncErrorBoundary(update)],
+  edit: [
+    asyncErrorBoundary(resExists), 
+    bodyHasProperty("first_name"), 
+    bodyHasProperty("last_name"), 
+    bodyHasProperty("mobile_number"), 
+    bodyHasProperty("reservation_date"),
+    bodyHasProperty("reservation_time"),
+    validDate(),
+    validTime(),
+    bodyHasProperty("people"),
+    validPeople(),
+    validStatus(),
+    asyncErrorBoundary(edit)
+  ]
 };
