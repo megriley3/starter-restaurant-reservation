@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import { updateReservationStatus } from "../utils/api";
@@ -8,11 +8,13 @@ function ReservationsList({reservations, seatReserved, search, cancelled, setCan
 
     const handleCancel = ({target}) => {
         const result = window.confirm("Do you want to cancel this reservation? This cannot be undone.");
+        const abortController = new AbortController();
         if(result){
             setCancelled(target.value);
-            updateReservationStatus(target.value, "cancelled")
+            updateReservationStatus(target.value, "cancelled", abortController.signal)
                 .catch(setError)
         }
+        return () => abortController.abort();
     }
 
     if(Array.isArray(reservations)){

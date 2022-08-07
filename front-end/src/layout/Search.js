@@ -16,11 +16,13 @@ function Search({seatReserved}){
 }
     const handleSubmit = (event)=>{
         event.preventDefault();
+        const abortController = new AbortController();
         setSearched(!searched);
         setMobile("");
-        listReservations({mobile_number: mobile})
+        listReservations({mobile_number: mobile}, abortController.signal)
             .then(setSearchResults)
             .catch(setError)
+        return () => abortController.abort();
     }
 
     if(searched){

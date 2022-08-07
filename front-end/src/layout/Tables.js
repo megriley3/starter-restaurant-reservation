@@ -32,10 +32,12 @@ function Tables(){
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        const abortController = new AbortController()
             setTableData(initialTableData);
-            createTable(tableData)
+            createTable(tableData, abortController.signal)
                 .then(history.push("/"))
                 .catch(setError)
+        return () => abortController.abort();
     }
 
 

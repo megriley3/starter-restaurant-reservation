@@ -23,8 +23,9 @@ function Reservations({ reservationDate, setReservationDate, edit }) {
   useEffect(findReservation, [])
 
   function findReservation(){
+    const abortController = new AbortController();
     if(edit){
-      getReservation(reservation_id)
+      getReservation(reservation_id, abortController.signal)
         .then((res)=>{
           const date = res.reservation_date;
           const resDate = date.split("T")[0];
@@ -32,7 +33,6 @@ function Reservations({ reservationDate, setReservationDate, edit }) {
           let resTime = time.split(":");
           resTime.pop();
           resTime = resTime.join(":");
-          console.log(resTime)
           setFormData({...initialFormData,
             ...res,
             reservation_date: resDate,
@@ -42,6 +42,7 @@ function Reservations({ reservationDate, setReservationDate, edit }) {
         .then(setReservation(formData))
         .catch(setError);
     }
+    return () => abortController.abort();
   }
 
   const handleChange = ({ target }) => {
@@ -106,23 +107,26 @@ function Reservations({ reservationDate, setReservationDate, edit }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const abortController = new AbortController();
     validTime();
     setFormData(initialFormData);
     const date = formData.reservation_date;
     setReservationDate(formData.reservation_date);
-    createReservation(formData)
+    createReservation(formData, abortController.signal)
       .then(() => history.push(`/dashboard?date=${date}`))
       .catch(setError);
+    return () => abortController.abort();
   };
 
   const handleEdit = (event) => {
     event.preventDefault();
+    const abortController = new AbortController();
     validTime();
     setReservationDate(formData.reservation_date)
-    editReservation(formData)
+    editReservation(formData, abortController.signal)
       .then(()=>history.push(`/dashboard?date=${reservationDate}`))
       .catch(setError)
-
+    return ()=>abortController.abort();
   }
 
   if(edit){

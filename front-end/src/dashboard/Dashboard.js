@@ -83,8 +83,6 @@ function Dashboard({ reservationDate, setReservationDate, seatReserved, setSeatR
         setSeatDeleted={setSeatDeleted}
         deleted={null}
       />
-      {/*{JSON.stringify(reservations)}}
-  {JSON.stringify(tables)}*/}
       <div>
         <button onClick={handleClickPrevious}>Previous</button>
         <button onClick={handleClickToday}>Today</button>
