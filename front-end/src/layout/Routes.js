@@ -33,10 +33,18 @@ function Routes() {
       <Route exact={true} path="/reservations/:reservation_id/seat">
         <SeatReservations seatReserved={seatReserved} setSeatReserved={setSeatReserved} />
       </Route>
+      <Route exact={true} path="/reservations/:reservation_id/edit">
+        <Reservations
+        reservationDate={reservationDate}
+        setReservationDate={setReservationDate}
+        edit={true}
+        />
+      </Route>
       <Route path="/reservations">
         <Reservations
           reservationDate={reservationDate}
           setReservationDate={setReservationDate}
+          edit={false}
         />
       </Route>
       <Route path="/dashboard">

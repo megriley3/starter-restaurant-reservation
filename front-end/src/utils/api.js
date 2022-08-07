@@ -139,7 +139,7 @@ export async function editReservation(reservation, signal){
   const options = {
     method: 'PUT',
     headers,
-    body: JSON.stringify({data: {reservation: reservation}}), 
+    body: JSON.stringify({data: reservation}), 
     signal
   }
 

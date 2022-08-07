@@ -74,12 +74,13 @@ function validTime() {
   return function (req, res, next) {
     const { data: { reservation_time } = {} } = req.body;
     const timeFormat = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
-    if (!reservation_time.match(timeFormat)) {
+   /* if (!reservation_time.match(timeFormat)) {
+      console.log("format")
       return next({
         status: 400,
         message: `reservation_time is invalid`,
       });
-    }
+    }*/
 
     if (reservation_time < "10:30" || reservation_time > "21:30") {
       return next({
@@ -151,6 +152,7 @@ async function read(req, res, next){
 }
 
 async function resExists(req, res, next){
+  console.log(req.body.data)
   const {reservation_id} = req.params;
   const reservation = await reservationsService.read(reservation_id);
   if(!reservation){

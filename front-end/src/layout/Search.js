@@ -7,6 +7,7 @@ function Search({seatReserved}){
     const [mobile, setMobile] = useState("");
     const [searched, setSearched] = useState(false)
     const [searchResults, setSearchResults] = useState([]);
+    const [cancelled, setCancelled] = useState("");
     const [error, setError] = useState(null)
 
     const handleChange = ({target})=>  {
@@ -56,7 +57,7 @@ function Search({seatReserved}){
                         <button type="submit">Find</button>
                     </form>
                     <h3>Results</h3>
-                    <ReservationsList reservations={searchResults} seatReserved={seatReserved} search={true}/>
+                    <ReservationsList reservations={searchResults} seatReserved={seatReserved} search={true} cancelled={cancelled} setCancelled={setCancelled}/>
                 </main>
             )
         } else {

@@ -1,21 +1,17 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import { updateReservationStatus } from "../utils/api";
 
-function ReservationsList({reservations, seatReserved, search}){
-    const [cancelled, setCancelled] = useState(false);
-    const [error, setError] = useState(null)
+function ReservationsList({reservations, seatReserved, search, cancelled, setCancelled}){
+    const [error, setError] = useState(null);
 
     const handleCancel = ({target}) => {
-        console.log(cancelled);
         const result = window.confirm("Do you want to cancel this reservation? This cannot be undone.");
         if(result){
-            console.log(target.value)
-            setCancelled(!cancelled);
+            setCancelled(target.value);
             updateReservationStatus(target.value, "cancelled")
                 .catch(setError)
-            console.log(cancelled);
         }
     }
 
@@ -24,7 +20,7 @@ function ReservationsList({reservations, seatReserved, search}){
             const {reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status} = reservation;
             if(search){
                 return (
-                    <tr key={index}>
+                    <tr key={reservation_id}>
                         <td>{reservation_date}</td>
                         <td>{reservation_time}</td>
                         <td>{last_name}</td>
@@ -38,11 +34,11 @@ function ReservationsList({reservations, seatReserved, search}){
                         <td><button onClick={handleCancel} data-reservation-id-cancel={reservation.reservation_id} value={reservation_id}>Cancel</button></td>
                     </tr>
                 )
-            } else if(status==="finished" || Number(seatReserved.finishedRes)===reservation_id){
+            } else if(status==="finished" || Number(seatReserved.finishedRes)===reservation_id || Number(cancelled)===reservation_id){
                 return null
             } else if(status==="seated" || Number(seatReserved.reservation_id)===reservation_id ) {
                 return (
-                    <tr key={index}>
+                    <tr key={reservation_id}>
                         <td>{reservation_date}</td>
                         <td>{reservation_time}</td>
                         <td>{last_name}</td>
@@ -58,7 +54,7 @@ function ReservationsList({reservations, seatReserved, search}){
                 )
             } else if(status==="booked"){
                 return (
-                    <tr key={index}>
+                    <tr key={reservation_id}>
                         <td>{reservation_date}</td>
                         <td>{reservation_time}</td>
                         <td>{last_name}</td>
