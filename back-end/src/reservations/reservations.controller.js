@@ -6,7 +6,9 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  */
 async function list(req, res, next) {
   const {mobile_number} = req.query;
-  if(mobile_number){
+  const queries = req.query;
+  const queriesKeys = Object.keys(queries);
+  if(Array.isArray(queriesKeys) && queriesKeys.includes('mobile_number')){
     const data = await reservationsService.search(mobile_number);
     res.json({data})
   } else{
