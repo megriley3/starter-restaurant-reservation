@@ -28,9 +28,15 @@ function Reservations({ reservationDate, setReservationDate, edit }) {
         .then((res)=>{
           const date = res.reservation_date;
           const resDate = date.split("T")[0];
+          const time = res.reservation_time;
+          let resTime = time.split(":");
+          resTime.pop();
+          resTime = resTime.join(":");
+          console.log(resTime)
           setFormData({...initialFormData,
             ...res,
             reservation_date: resDate,
+            reservation_time: resTime
         }
         )})
         .then(setReservation(formData))
