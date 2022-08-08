@@ -26,7 +26,10 @@ function TablesList({tables, loadTables, setSeatReserved, seatReserved, setTable
     if(Array.isArray(tables)){
         const rows = tables.map((table, index) => {
             const {table_name, capacity, reservation_id, table_id} = table;
-            if((reservation_id  && !(seatReserved.finishedRes===reservation_id)) || Number(seatReserved.table_id)===table_id){
+            console.log(reservation_id, "resId", seatReserved.finishedRes, "finRese")
+            console.log((reservation_id  && !(seatReserved.finishedRes===reservation_id)), "resId")
+            console.log(Number(seatReserved.table_id)===table_id, "tableId", seatReserved.table_id, "sr", table_id, "ti")
+            if((reservation_id  && !(Number(seatReserved.finishedRes)===reservation_id)) || Number(seatReserved.table_id)===table_id){
                 return (
                     <tr key = {table_id}>
                         <td>{table_name}</td>
