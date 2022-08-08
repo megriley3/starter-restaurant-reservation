@@ -35,19 +35,11 @@ function validDate() {
     const { data: { reservation_date } = {} } = req.body;
 
     const dateFormat = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
-    //console.log(reservation_date);
     let resDate = reservation_date + "T00:00:00";
     resDate = new Date(reservation_date);
-    //console.log(resDate, "resDate");
     res.locals.reservation_date = resDate;
     const today = new Date();
     const day = resDate.getDay();
-    /* console.log(
-      resDate.getMonth(),
-      today.getMonth(),
-      resDate.getDate(),
-      today.getDate()
-    );*/
     if (!reservation_date.match(dateFormat)) {
       return next({
         status: 400,
@@ -88,25 +80,6 @@ function validTime() {
       });
     }
     next();
-    //   const timeArray = reservation_time.split(":");
-    //   const hours = Number(timeArray[0]);
-    //   const minutes = Number(timeArray[1]);
-    //   const now = new Date();
-    //   const currHours = now.getHours();
-    //   const currMinutes = now.getMinutes();
-    //   if (hours < 10 || (hours === 10 && minutes < 30)) {
-    //     next({ status: 400, message: `Restaurant opens at 10:30` });
-    //   }
-    //   if (hours < currHours || (hours === currHours && minutes < currMinutes)) {
-    //     next({ status: 400, message: `Reservation time has already passed.` });
-    //   }
-    //   if (hours > 21 || (hours === 21 && minutes > 30)) {
-    //     next({
-    //       status: 400,
-    //       message: `Reservations must be at least an hour before closing.`,
-    //     });
-    //   }
-    //   next();
   };
 }
 
