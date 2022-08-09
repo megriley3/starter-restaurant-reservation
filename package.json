@@ -50,6 +50,6 @@
   "license": "UNLICENSED",
   "dependencies": {
     "moment": "^2.29.4",
-    "type-fest": "0.21.3"
+    "type-fest": "0.13.1"
   }
 }
