@@ -5,9 +5,7 @@ import ErrorAlert from "./ErrorAlert";
 
 function Reservations({ reservationDate, setReservationDate, edit }) {
   const history = useHistory();
-  const [reservation, setReservation] = useState("")
   const [error, setError] = useState(null);
-  const path = window.location.pathname;
   const {reservation_id} = useParams();
 
   let initialFormData = {
@@ -20,7 +18,7 @@ function Reservations({ reservationDate, setReservationDate, edit }) {
   };
 
   const [formData, setFormData] = useState(initialFormData);
-  useEffect(findReservation, [])
+  useEffect(findReservation, [edit, reservation_id])
 
   function findReservation(){
     const abortController = new AbortController();
@@ -39,7 +37,6 @@ function Reservations({ reservationDate, setReservationDate, edit }) {
             reservation_time: resTime
         }
         )})
-        .then(setReservation(formData))
         .catch(setError);
     }
     return () => abortController.abort();

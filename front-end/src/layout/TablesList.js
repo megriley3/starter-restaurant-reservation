@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import { deleteSeating, updateReservationStatus } from "../utils/api";
 
 function TablesList({tables, loadTables, setSeatReserved, seatReserved, setTablesError, seatDeleted, setSeatDeleted}){

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import ReservationsList from "../dashboard/ReservationsList";
 import {listReservations} from "../utils/api";
 import ErrorAlert from "./ErrorAlert";
@@ -27,18 +27,6 @@ function Search({seatReserved}){
 
     if(searched){
         if(searchResults.length){
-            const results = searchResults.map(({reservation_date, reservation_time, first_name, last_name, people, mobile_number}, index) => {
-                return (
-                    <tr key={index}>
-                        <td>{reservation_date}</td>
-                        <td>{reservation_time}</td>
-                        <td>{last_name}</td>
-                        <td>{first_name}</td>
-                        <td>{people}</td>
-                        <td>{mobile_number}</td>
-                    </tr>
-                )
-            })
             return (
                 <main>
                     <h3>Search for Reservation</h3>
